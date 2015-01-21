@@ -29,7 +29,7 @@ Install (unpack) into your `sketchbook/libraries` folder:
 Included in the [data](blob/master/data) directory:
 
 - klee-lines-dots-drawing-bw.jpg : a drawing by Paul Klee (downloaded from [here](http://artbusnyc.blogspot.co.uk/2011/01/artbus-lines-dots-and-circles-inspired.html))
-- sc02-1n.jpg : an image used with the actual ANS synthesizer (downloaded from [here](http://www.theremin.ru/archive/ans.htm)
+- sc02-1n.jpg : an image used with the actual ANS synthesizer (downloaded from [here](http://www.theremin.ru/archive/ans.htm))
 - Coil-ANS-C-grey.png : A "composition" by the experimental music group *Coil*
 - Coil-ANS-D-grey.png : Another one by *Coil* (note that these are a bit noisy due to lack of image cleaning)
 - graph2d-1.png : parametric graph 1
