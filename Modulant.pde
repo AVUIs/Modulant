@@ -33,6 +33,8 @@ int BPM = 10;
 
 // 5. which image to sonify
 String bgImageFile = "data/klee-lines-dots-drawing-bw.jpg";
+//String bgImageFile = "data/Coil-ANS-C-grey.png";
+//String bgImageFile = "data/Coil-ANS-D-grey.png";
 //String bgImageFile = "data/sc02-1n.jpg";
 //String bgImageFile = "data/graph2d-1.png";
 //String bgImageFile = "data/graph2d-2.png";
