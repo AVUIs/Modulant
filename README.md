@@ -55,9 +55,9 @@ Included in the [data](blob/master/data) directory:
 
 ## License
 
-Modulant - A sonification and audiovisual performance interface experiment
-Copyright 2015 Berkan Eskikaya, Louis Pilfold
-
-This Source Code Form is subject to the terms of the Mozilla Public
-License, v. 2.0. If a copy of the MPL was not distributed with this
-file, You can obtain one at http://mozilla.org/MPL/2.0/.
+	Modulant - A sonification and audiovisual performance interface experiment
+	Copyright 2015 Berkan Eskikaya, Louis Pilfold
+	
+	This Source Code Form is subject to the terms of the Mozilla Public
+	License, v. 2.0. If a copy of the MPL was not distributed with this
+	file, You can obtain one at http://mozilla.org/MPL/2.0/.
