@@ -12,7 +12,7 @@ The audio engine is inspired by a 1940’s synthesizer, the ANS, that scans acro
 
 For this very first / monkeypatch version , the source code itself is your interface. There is no other form of interaction.
 
-Open [Modulant.pde](blob/master/Modulant.pde), change the parameters at the top, and run the sketch. Repeat.
+Open [Modulant.pde](Modulant.pde), change the parameters at the top, and run the sketch. Repeat.
 
 
 ## Dependencies
@@ -26,7 +26,7 @@ Install (unpack) into your `sketchbook/libraries` folder:
 ## Example images for sonification
 
 
-Included in the [data](blob/master/data) directory:
+Included in the [data](data) directory:
 
 - klee-lines-dots-drawing-bw.jpg : a drawing by Paul Klee (downloaded from [here](http://artbusnyc.blogspot.co.uk/2011/01/artbus-lines-dots-and-circles-inspired.html))
 - sc02-1n.jpg : an image used with the actual ANS synthesizer (downloaded from [here](http://www.theremin.ru/archive/ans.htm))
