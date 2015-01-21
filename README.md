@@ -2,7 +2,7 @@
 
 Modulant allows for the creation of images and their sonification.
 
-The present implementation is built upon image-importing ~~and freehand-drawing~~<sup>not yet</sup> modules that may be used to create arbitrary visual scenes (and eerie sounds), more constrained functional and typographical modules in development.
+The present implementation is built upon image-importing ~~and freehand-drawing~~<sup>not yet</sup> modules that may be used to create arbitrary visual scenes (and eerie sounds), with more constrained functional and typographical modules in development.
 
 The audio engine is inspired by a 1940’s synthesiser, the ANS, that scans across images. In this scanning, one axis is time and the other axis is frequency. Modulant thus becomes a graphical space to be explored sonically and vice-versa. The project is built with Processing for graphics and interaction, and Ruby & Puredata for sound.
 
