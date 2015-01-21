@@ -52,3 +52,12 @@ Included in the [data](blob/master/data) directory:
 * [berkan](github.com/berkan)
 * [lpil](github.com/lpil)
 * [zipporobotics](github.com/zipporobotics)
+
+## License
+
+Modulant - A sonification and audiovisual performance interface experiment
+Copyright 2015 Berkan Eskikaya, Louis Pilfold
+
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
