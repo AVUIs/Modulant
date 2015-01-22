@@ -29,7 +29,7 @@ int STEPS = QUARTERTONES;
 float FREQ0 = 16.352;
 
 // 4. what's the BPM
-int BPM = 10;
+int BPM = 600;
 
 // 5. which image to sonify
 String bgImageFile = "data/klee-lines-dots-drawing-bw.jpg";
@@ -46,7 +46,7 @@ String bgImageFile = "data/klee-lines-dots-drawing-bw.jpg";
 
 float STEP_RATIO = (float) nthroot(STEPS,2); //1.0594 for SEMITONES
 int ALL_STEPS = OCTAVES * STEPS;
-int BEAT_INTERVAL_MS = 1000/BPM;
+int BEAT_INTERVAL_MS = 1000*60/BPM;
 String patchfile = "modulant-"+OCTAVES+"x"+STEPS+".pd";
 
 
@@ -57,6 +57,11 @@ PImage bgImage;
 PureData pd;
 TimedEventGenerator beats;
 int lastMillis = 0;
+
+int currentScanLine = -1;
+color scannedPixelColour[] = null;
+int scannedPixelIndex[] = null;
+
 
 void setup() {
 
@@ -77,6 +82,11 @@ void setup() {
   // set up the beat tick
   beats = new TimedEventGenerator(this);
   beats.setIntervalMs(BEAT_INTERVAL_MS);
+
+  currentScanLine = -1;
+  scannedPixelColour = new color[height];
+  scannedPixelIndex = new int[height];
+
 }
 
 
@@ -84,45 +94,46 @@ void draw() {
 }
 
 
-int currentSlice = 0;
 
 
-// TODO: This should probably go into draw() instead
 void onTimerEvent() {
   int millisDiff = millis() - lastMillis;
   lastMillis = millisDiff + lastMillis;  
-
   //System.out.println("tick " + millisDiff + " " + lastMillis);
 
-  // background(0);
-  image(bgImage, 0, 0);
+
+  //image(bgImage, 0, 0);
 
   loadPixels();
 
-  color[] slice = new color[height];
-  
-  //System.out.print(currentSlice + ": ");
+  // if we have already scanned a line, restore that area first
+  if (currentScanLine >= 0){
+    for (int i=0; i<scannedPixelIndex.length; i++) {
+      pixels[scannedPixelIndex[i]] = scannedPixelColour[i];
+    }
+  }
 
 
-  // TODO: this is messy
-  for (int y=0; y<height; y += height/ALL_STEPS) {
+  // scan the next line
+  currentScanLine = (currentScanLine+1) % width;
 
-    color c = pixels[y*width + currentSlice];
-    slice[y] = c;
+  for (int y=0, i=0; y<height; y += height/ALL_STEPS, i++) {
+
+    int thisPixelIndex = y*width + currentScanLine;
+    color c = pixels[thisPixelIndex];
+
+    scannedPixelColour[i] = c;
+    scannedPixelIndex[i] = thisPixelIndex;
 
     float brightness = brightness(c) / 255;    
     pd.sendFloat("unit"+(ALL_STEPS-y), brightness/30);
-    //System.out.print(brightness + " ");
 
     // draw the scan-line
-    pixels[y*width + currentSlice] = color(0,126,255);
+    pixels[thisPixelIndex] = color(0,126,255);
 
   }
-  //System.out.println();
-
+  
   updatePixels();
-
-  currentSlice = (currentSlice+1) % width;
   
 }
 
