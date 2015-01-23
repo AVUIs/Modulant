@@ -37,7 +37,7 @@ void generatePatchfile(String patchfileName, float freq0, int nUnits) {
   PrintWriter patch = createWriter(patchfileName);
 
   patch.println("#N canvas 1000 70 762 624 10;");  
-  patch.println("#X obj 78 116 dac~;");
+  patch.println("#X obj 78 116 dac~;"); // 0
 
   float freq = freq0;
   for (int unit = 0; unit < nUnits; unit++) {
@@ -59,10 +59,13 @@ void generatePatchfile(String patchfileName, float freq0, int nUnits) {
     patch.println("#X connect " + (elem+4) + " 0 " + (elem+5) + " 0;");
     patch.println("#X connect " + (elem+5) + " 0 " + (elem+3) + " 1;");
 
-    patch.println("#X connect " + (elem+1) + " 0 " + (elem+3) + " 1;");
+    // TODO: this connection was made by accident - but it doesn't seem to effect
+    // things negatively either. keeping it to investigate later.
+    //    patch.println("#X connect " + (elem+1) + " 0 " + (elem+3) + " 1;");
+
+    patch.println("#X connect " + (elem+2) + " 0 " + (elem+3) + " 0;");
     patch.println("#X connect " + (elem+3) + " 0 " + " 0 "    + " 0;");
     patch.println("#X connect " + (elem+3) + " 0 " + " 0 "    + " 1;");
-    patch.println("#X connect " + (elem+2) + " 0 " + (elem+3) + " 0;");
 
   }
 
