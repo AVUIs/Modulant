@@ -41,6 +41,8 @@ String bgImageFile = "data/klee-lines-dots-drawing-bw.jpg";
 //String bgImageFile = "data/graph2d-3.png";
 
 
+Config config;
+
 
 // now calculate some more parameters
 
@@ -57,29 +59,10 @@ int WIDTH = 800;
 int HEIGHT = 600;
 
 PImage bgImage;
+PGraphics workBuffer;
+PGraphics effectsBuffer;
 
-// Adding zooming and panning support
-
-int imgW;
-int imgH;
-int centerX;
-int centerY;
-
-//Define the zoom vars
-int scale = 1;
-int maxScale = 10;
-float zoomFactor = 0.4;
-
-//Define the pan vars
-int panFromX;
-int panFromY;
-int panToX;
-int panToY;
-int xShift = 0;
-int yShift = 0;
-
-
-PureData pd;
+PureDataMiddleware pd;
 TimedEventGenerator beats;
 int lastMillis = 0;
 
@@ -90,10 +73,29 @@ int scannedPixelIndex[] = null;
 
 void setup() {
 
+  config = new Config()
+    .lengthInSeconds(30)
+    .bpm(125)
+    .octaves(10)
+    .intervalsInOctave(OctaveDivisions.QUARTERTONES)
+    .update();
+
+  println(config);
+
+  size(WIDTH, HEIGHT);
+  frameRate(30);
+
+
+
   // load the image, resize it in proportion to the number of pitches
   // we have, then set the size of the window
   bgImage = loadImage(bgImageFile);
-  bgImage.resize(0,ALL_STEPS);  
+
+  bgImage.resize(0,config.numberOfAllIntervals());
+  workBuffer = createGraphics(bgImage.width, bgImage.height);
+  workBuffer.background(bgImage);
+  //  workBuffer.resize(0,config.numberOfAllIntervals());
+  
   //size(bgImage.width, bgImage.height);
 
   imgW = bgImage.width;
@@ -101,16 +103,16 @@ void setup() {
   centerX = WIDTH / 2;
   centerY = HEIGHT / 2;
 
-  size(WIDTH, HEIGHT);
+  
 
 
   // start Puredata 
-  generatePatch(patchfile);
-  startPuredata(patchfile);
+  pd = new PureDataMiddleware(this,config);
+  pd.start();
 
   // set up the beat tick
   beats = new TimedEventGenerator(this);
-  beats.setIntervalMs(BEAT_INTERVAL_MS);
+  beats.setIntervalMs(config.oneTickInMs());
 
   currentScanLine = -1;
   scannedPixelColour = new color[height];
@@ -120,9 +122,12 @@ void setup() {
 
 
 void draw() {
-  background(0);
-  imageMode(CENTER);
-  image(bgImage, centerX, centerY, imgW, imgH);
+  //  background(0);
+  //imageMode(CENTER);
+  //image(bgImage, centerX, centerY, imgW, imgH);
+
+  //  stroke(0,126,255);
+  //line(currentScanLine,0,currentScanLine,height);
 }
 
 
@@ -133,121 +138,45 @@ void onTimerEvent() {
   lastMillis = millisDiff + lastMillis;  
   //System.out.println("tick " + millisDiff + " " + lastMillis);
 
+  int numberOfAllIntervals = config.numberOfAllIntervals();
 
-  //image(bgImage, 0, 0);
-
-  loadPixels();
-
-  // if we have already scanned a line, restore that area first
-  if (currentScanLine >= 0){
-    for (int i=0; i<scannedPixelIndex.length; i++) {
-      pixels[scannedPixelIndex[i]] = scannedPixelColour[i];
-    }
-  }
-
+  workBuffer.loadPixels();
+  color[] wpixels = workBuffer.pixels;
+  int wwidth = workBuffer.width;
+  int wheight = workBuffer.height;
 
   // scan the next line
-  currentScanLine = (currentScanLine+1) % width;
+  currentScanLine = (currentScanLine+1) % wwidth;
 
-  for (int y=0, i=0; y<height; y += height/ALL_STEPS, i++) {
 
-    int thisPixelIndex = y*width + currentScanLine;
-    color c = pixels[thisPixelIndex];
+  background(0);
+  imageMode(CENTER);
+  image(bgImage, centerX, centerY, imgW, imgH);
+
+  stroke(0,126,255);
+  line(currentScanLine,0,currentScanLine,height);
+
+
+  for (int y=0, i=0; y<wheight; y += wheight/numberOfAllIntervals, i++) {
+
+    int thisPixelIndex = y*wwidth + currentScanLine;
+    color c = wpixels[thisPixelIndex];
 
     scannedPixelColour[i] = c;
-    scannedPixelIndex[i] = thisPixelIndex;
 
     float brightness = brightness(c) / 255;    
-    //pd.sendFloat("unit"+(ALL_STEPS-y), brightness/30);
+    int unitNo = numberOfAllIntervals-y;
+    pd.sendFloat("unit"+unitNo, brightness/30);
 
     // draw the scan-line
-    pixels[thisPixelIndex] = color(0,126,255);
-
+    //pixels[thisPixelIndex] = color(0,126,255);
   }
   
-  updatePixels();
+  //updatePixels();
+
   
 }
 
 
-void keyPressed() {
-  if (key == 'r') {
-    scale = 1;
-    imgW = bgImage.width;
-    imgH = bgImage.height;
-    centerX = WIDTH / 2;
-    centerY = HEIGHT / 2;
-  }
-}
 
 
-//Pan function
-void mousePressed(){
-  if(mouseButton == LEFT){
-    panFromX = mouseX;
-    panFromY = mouseY;
-  }
-}
-
-
-//Pan function continued..
-void mouseDragged(){
-  if(mouseButton == LEFT){
-    panToX = mouseX;
-    panToY = mouseY;
-    
-    xShift = panToX - panFromX; 
-    yShift = panToY - panFromY;
-    
-    centerX = centerX + xShift;
-    centerY = centerY + yShift;
-    
-    panFromX = panToX;
-    panFromY = panToY;
-  }
-}
-
-
-//Zoom function
-void mouseWheel(MouseEvent event) {
-  float e = event.getAmount();
-  
-  //Zoom in
-  if(e == -1){
-    if(scale < maxScale){
-      scale++;
-      imgW = int(imgW * (1+zoomFactor));
-      imgH = int(imgH * (1+zoomFactor));
-      
-      int oldCenterX = centerX;
-      int oldCenterY = centerY;  
-      
-      centerX = centerX - int(zoomFactor * (mouseX - centerX));
-      centerY = centerY - int(zoomFactor * (mouseY - centerY));
-    }
-  }
-  
-  //Zoom out
-  if(e == 1){
-    // if(scale < 1){
-    //   scale = 1;
-    //   imgW = bgImage.width;
-    //   imgH = bgImage.height;
-    // }
-    
-    if(scale > 1){
-      scale--;
-      imgH = int(imgH/(1+zoomFactor));
-      imgW = int(imgW/(1+zoomFactor));
-      
-      int oldCenterX = centerX;
-      int oldCenterY = centerY;  
-      
-      centerX = centerX + int((mouseX - centerX) 
-                              * (zoomFactor/(zoomFactor + 1))); 
-      centerY = centerY + int((mouseY - centerY) 
-                              * (zoomFactor/(zoomFactor + 1)));
-      
-    }
-  }
-}
