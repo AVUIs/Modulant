@@ -12,11 +12,11 @@ public class OnscreenHelp {
     "Shift-c \t\t clear all\n" +
     "\n" +
     "Sonification Control \n\n" +
-    "Space \t\t toggle scanning\n" +
+    "Space \t\t resume/pause scanning\n" +
     "Left/Right \t\t step 1px\n" +
     "Ctrl-Left/Right \t\t step 10px\n" +
     "Shift-Ctrl-Left/Right \t\t step 50px\n" +
-    "m \t\t toggle sound\n" +
+    "m \t\t mute/unmute sound\n" +
     "g \t\t toggle grid\n";
 
   String helptext2 = 
@@ -30,8 +30,7 @@ public class OnscreenHelp {
     "Ctrl-1:8 \t\t Solarized accents\n" +
     "9 \t\t white\n" +
     "\n" +
-    "Help\n\n" +
-    "h \t\t toggle help (this text)"
+    "h \t\t toggle help (this text)";
     
     
   
@@ -72,7 +71,7 @@ public class OnscreenHelp {
     helpBuffer.fill(color(0, 0));
     helpBuffer.textLeading(24);
     helpBuffer.text(helptext1, 30, 40);
-    helpBuffer.text(helptext2, 230, 40);
+    helpBuffer.text(helptext2, 300, 40);
     helpBuffer.endDraw();
 
     return this;
