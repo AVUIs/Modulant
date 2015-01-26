@@ -1,38 +1,13 @@
 import org.puredata.processing.PureData;
 import org.multiply.processing.TimedEventGenerator;
+import javax.swing.undo.UndoManager;
 
 /* Modulant - A sonification and audiovisual performance interface experiment.
    Copyright 2015 Berkan Eskikaya, Louis Pilfold
-
-   For this very first / monkeypatch version , the source code itself
-   is your interface. There is no other form of interaction.
-
-   Change the parameters below, run the sketch. Repeat.
  */
 
 
-// CONSTANTS - in an octave, there are...
-int SEMITONES = 12; 
-int QUARTERTONES = 24;
-
-
-// PARAMETERS: We set these as we like:
-
-// 1. how many octaves do we want
-int OCTAVES = 10;
-
-// 2. are we going to use semitones or quartertones
-//int STEPS = SEMITONES;
-int STEPS = QUARTERTONES;
-
-// 3. what's the lowest freqency
-float FREQ0 = 16.352;
-
-// 4. what's the BPM
-int BPM = 600;
-
-// 5. which image to sonify
-String bgImageFile = "data/klee-lines-dots-drawing-bw.jpg";
+//String bgImageFile = "data/klee-lines-dots-drawing-bw.jpg";
 //String bgImageFile = "data/Coil-ANS-C-grey.png";
 //String bgImageFile = "data/Coil-ANS-D-grey.png";
 //String bgImageFile = "data/sc02-1n.jpg";
@@ -41,99 +16,207 @@ String bgImageFile = "data/klee-lines-dots-drawing-bw.jpg";
 //String bgImageFile = "data/graph2d-3.png";
 
 
+Config config;
 
-// now calculate some more parameters
-
-float STEP_RATIO = (float) nthroot(STEPS,2); //1.0594 for SEMITONES
-int ALL_STEPS = OCTAVES * STEPS;
-int BEAT_INTERVAL_MS = 1000*60/BPM;
-String patchfile = "modulant-"+OCTAVES+"x"+STEPS+".pd";
+int WIDTH = 800;
+int HEIGHT = 600;
 
 
+PGraphics workBuffer;
+PGraphics effectsBuffer;
+PGraphics gridBuffer;
 
-// MAIN - here we go
+PureDataMiddleware pd;
 
-PImage bgImage;
-PureData pd;
-TimedEventGenerator beats;
-int lastMillis = 0;
+DragAction rubberBandSelection;
+DragAction rubberBandRectangle;
+DragAction rubberBandTriangle;
+DragAction rubberBandEllipse;
+DragAction freehandBrushStandard;
+DragAction freehandBrushDots;
 
-int currentScanLine = -1;
-color scannedPixelColour[] = null;
-int scannedPixelIndex[] = null;
+KeyboardUI keyboardUI;
+
+ColourManager colourManager;
+color activeColor = #ffffff;
+
+IDrawer activeDrawer = null;
+
+
+ScanningController scanningController;
+void onTimerEvent() { scanningController.onTimerEvent(); }
+
+GridController grid;
+
+OnscreenHelp onscreenHelp;
+
+UndoManager undoManager;
+
+ImageManager imageManager;
+
+
 
 
 void setup() {
 
-  // load the image, resize it in proportion to the number of pitches
-  // we have, then set the size of the window
-  bgImage = loadImage(bgImageFile);
-  bgImage.resize(0,ALL_STEPS);  
-  size(bgImage.width, bgImage.height);
+  /* Configuration */
 
-  // display the image
-  background(0);
-  image(bgImage, 0, 0);
+  config = new Config()
+    .lengthInSeconds(30)
+    .bpm(125)
+    .octaves(10)
+    .intervalsInOctave(OctaveDivisions.SEMITONES)
+    .backgroundImage("data/klee-lines-dots-drawing-bw.jpg")
+    .update();
+
+  println(config);
+
+
+  size(WIDTH, HEIGHT);
+  frameRate(30);
+
+
+  /* Buffers (Layers) */
+
+  workBuffer = createGraphics(WIDTH,HEIGHT);
+  effectsBuffer = createGraphics(WIDTH, HEIGHT);
+  gridBuffer = createGraphics(WIDTH, HEIGHT);
+  gridBuffer.background(255,0);
+
+
+  /* Controllers and Managers */
+
+  imageManager = new ImageManager(this, workBuffer);
+  imageManager.background(config.backgroundImage());
+
+
+  grid = new GridController(gridBuffer, config.lengthInBeats(), config.octaves(), color(50,50,50,127));
+
+  onscreenHelp = new OnscreenHelp();
+
+  keyboardUI = new KeyboardUI();
+  keyboardUI.start();
+
+
+  colourManager = new ColourManager();
+
 
   // start Puredata 
-  generatePatch(patchfile);
-  startPuredata(patchfile);
+  pd = new PureDataMiddleware(this,config);
+  pd.start();
 
-  // set up the beat tick
-  beats = new TimedEventGenerator(this);
-  beats.setIntervalMs(BEAT_INTERVAL_MS);
+  scanningController = new ScanningController(this, config, workBuffer, effectsBuffer);
 
-  currentScanLine = -1;
-  scannedPixelColour = new color[height];
-  scannedPixelIndex = new int[height];
+  undoManager = new UndoManager();
+  undoManager.setLimit(5);
+
+
+  /* Drawing modes */
+
+  rubberBandSelection
+    = new DragAction(this.g, 
+                     new IDragStep() { 
+                       public void action(PGraphics g, int start_x, int start_y, int current_x, int current_y) {
+                         g.beginDraw();
+                         g.noStroke();
+                         g.rect(start_x, start_y, current_x-start_x,current_y-start_y);  
+                         g.endDraw();
+                       } 
+                     }, color(255,204,0,127))
+    .propagateTo(effectsBuffer);
+
+
+  rubberBandRectangle
+    = new DragAction(this.g, 
+                     new IDragStep() { 
+                       public void action(PGraphics g, int start_x, int start_y, int current_x, int current_y) {
+                         g.beginDraw();
+                         g.noStroke();
+                         g.rect(start_x, start_y, current_x-start_x,current_y-start_y);  
+                         g.endDraw();
+                       } 
+                     })
+    .propagateTo(workBuffer);
+  
+
+  rubberBandTriangle
+    = new DragAction(this.g, 
+                     new IDragStep() { 
+                       public void action(PGraphics g, int start_x, int start_y, int current_x, int current_y) {
+                         g.beginDraw();
+                         g.noStroke();
+                         g.triangle(start_x, start_y, current_x,current_y, current_x,start_y-(current_y-start_y));  
+                         g.endDraw();
+                       } 
+                     })
+    .propagateTo(workBuffer);
+
+
+  rubberBandEllipse
+    = new DragAction(this.g, 
+                     new IDragStep() { 
+                       public void action(PGraphics g, int start_x, int start_y, int current_x, int current_y) {
+                         g.beginDraw();
+                         g.noStroke();
+                         g.ellipse(start_x,start_y, current_x-start_x,start_y-current_y);  
+                         g.endDraw();
+                       } 
+                     })
+    .propagateTo(workBuffer);
+
+
+  freehandBrushStandard
+    = new DragAction(this.g, 
+                     new IDragStep() { 
+                       public void action(PGraphics g, int start_x, int start_y, int current_x, int current_y) {
+                         g.beginDraw();
+                         g.noStroke();
+                         g.ellipse(current_x, current_y, 10, 10);  
+                         g.endDraw();
+                       } 
+                     })
+    .propagateTo(workBuffer, true);
+
+
+  freehandBrushDots
+    = new DragAction(this.g, 
+                     new IDragStep() { 
+                       public void action(PGraphics g, int start_x, int start_y, int current_x, int current_y) {
+                         int nDots = 10;
+                         int radius = 15;
+                         int maxdotsize = 2;
+                         g.beginDraw();
+                         g.noStroke();  
+                         for (int n=0; n<nDots; n++) {
+                           float dotsize = random(1.0)*maxdotsize;
+                           float r = noise((float)current_x, (float)current_y, (float)n) * radius;
+                           float theata = noise((float)current_x, (float)current_y, (float)n) * 360;
+                           float x = r * cos(theata);
+                           float y = r * sin(theata);
+                           //println(r + " " + theata + " " + x + " " + y);
+                           g.ellipse(current_x+x, current_y+y, dotsize, dotsize);  
+                         }                         
+                         g.endDraw();
+                       } 
+                     })
+    .propagateTo(workBuffer, true);
+
+
+  color transcolor = color(255, 204, 0);
+  fill(transcolor);
+  smooth();
+  noStroke();
 
 }
 
 
 void draw() {
-}
-
-
-
-
-void onTimerEvent() {
-  int millisDiff = millis() - lastMillis;
-  lastMillis = millisDiff + lastMillis;  
-  //System.out.println("tick " + millisDiff + " " + lastMillis);
-
-
-  //image(bgImage, 0, 0);
-
-  loadPixels();
-
-  // if we have already scanned a line, restore that area first
-  if (currentScanLine >= 0){
-    for (int i=0; i<scannedPixelIndex.length; i++) {
-      pixels[scannedPixelIndex[i]] = scannedPixelColour[i];
-    }
-  }
-
-
-  // scan the next line
-  currentScanLine = (currentScanLine+1) % width;
-
-  for (int y=0, i=0; y<height; y += height/ALL_STEPS, i++) {
-
-    int thisPixelIndex = y*width + currentScanLine;
-    color c = pixels[thisPixelIndex];
-
-    scannedPixelColour[i] = c;
-    scannedPixelIndex[i] = thisPixelIndex;
-
-    float brightness = brightness(c) / 255;    
-    pd.sendFloat("unit"+(ALL_STEPS-y), brightness/30);
-
-    // draw the scan-line
-    pixels[thisPixelIndex] = color(0,126,255);
-
-  }
+  background(0);
   
-  updatePixels();
-  
+  image(workBuffer,0,0);
+  image(gridBuffer,0,0);
+  image(effectsBuffer,0,0);
+  if (activeDrawer != null)
+    activeDrawer.draw();
+  image(onscreenHelp.getBuffer(),0,0);
 }
-
