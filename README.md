@@ -2,7 +2,7 @@
 
 Modulant allows for the creation of images and their sonification.
 
-The present implementation is built upon image-importing ~~and freehand-drawing~~<sup>not yet</sup> modules that may be used to create arbitrary visual scenes (and eerie sounds), with more constrained functional and typographical modules in development.
+The present implementation is built upon image-importing and freehand-drawing modules that may be used to create arbitrary visual scenes (and eerie sounds), with more constrained functional and typographical modules in development.
 
 The audio engine is inspired by a 1940’s synthesizer, the ANS, that scans across images. In this scanning, one axis is time and the other axis is frequency. Modulant thus becomes a graphical space to be explored sonically and vice-versa. The project is built with Processing for graphics and interaction, and Ruby & Puredata for sound.
 
@@ -10,9 +10,44 @@ The audio engine is inspired by a 1940’s synthesizer, the ANS, that scans acro
 
 ## Usage
 
-For this very first / monkeypatch version , the source code itself is your interface. There is no other form of interaction.
+The early Modulant has a very plain and minimalist interface, geared toward fast switching between its modes.
 
-Open [Modulant.pde](Modulant.pde), change the parameters at the top, and run the sketch. Repeat.
+The application responds to keyboard shortcuts which select various drawing modes or execute commands. The pointer/mouse is only used for drawing.
+
+Here is the current list of keybindings:
+
+### Bindings for Drawing
+    r       rectangle mode 
+    t       triangle mode 
+    e       ellipse mode 
+    f       freehand mode 
+    d       freehand w/ dots 
+    Shift-c clear all 
+    Ctrl-z  undo 
+    Ctrl-y  redo 
+
+### Sonification Control
+    Space                  toggle scanning 
+    Left/Right             step 1px 
+    Ctrl-Left/Right        step 10px 
+    Shift-Ctrl-Left/Right  step 50px 
+    m  toggle sound 
+    g  toggle grid;
+
+### File Operations 
+    Ctrl-o  load background image 
+    Ctrl-s  save work buffer as image 
+ 
+### Colours 
+    0         black (eraser) 
+    1:8       Solarized base colours 
+    Ctrl-1:8  Solarized accents 
+    9  white
+
+### Help
+    h  toggle help (this text)
+
+
 
 
 ## Dependencies

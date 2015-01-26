@@ -1,7 +1,7 @@
 public class OnscreenHelp {
    
   String helptext1 = 
-    "Selectors for Drawing \n\n" +
+    "Bindings for Drawing \n\n" +
     "r \t\t rectangle mode\n" +
     "t \t\t triangle mode\n" +
     "e \t\t ellipse mode\n" +
@@ -11,8 +11,8 @@ public class OnscreenHelp {
     "Ctrl-y \t\t redo\n" +
     "Shift-c \t\t clear all\n" +
     "\n" +
-    "Scan&Sound Control \n\n" +
-    "Spacebar \t\t toggle scanning\n" +
+    "Sonification Control \n\n" +
+    "Space \t\t toggle scanning\n" +
     "Left/Right \t\t step 1px\n" +
     "Ctrl-Left/Right \t\t step 10px\n" +
     "Shift-Ctrl-Left/Right \t\t step 50px\n" +
@@ -28,7 +28,11 @@ public class OnscreenHelp {
     "0 \t\t black (eraser)\n" +
     "1:8 \t\t Solarized base colours\n" +
     "Ctrl-1:8 \t\t Solarized accents\n" +
-    "9 \t\t white\n";
+    "9 \t\t white\n" +
+    "\n" +
+    "Help\n\n" +
+    "h \t\t toggle help (this text)"
+    
     
   
   PGraphics helpBuffer;
