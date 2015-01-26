@@ -58,6 +58,12 @@ Install (unpack) into your `sketchbook/libraries` folder:
 - [TimedEvent](http://multiply.org/processing/)
 
 
+## Tips
+
+- Images that you load should light features on dark backgrounds. The brightness of each pixel determines the volume of the associated oscillator -- if the majority of your image is light, then all you're going to hear is a loud and harsh noise.
+
+- Also, when drawing, better to avoid bright and long vertical lines&regions -- these will turn on a lot of oscillator in one go, which may sound unpleasant (unless you know what you're doing).
+
 ## Example images for sonification
 
 

@@ -1,21 +1,28 @@
-#N canvas 268 342 450 300 10;
-#X obj 78 133 dac~;
-#X obj 121 -86 r vol1;
-#X obj 23 -27 osc~ 440;
-#X obj 121 -28 sig~;
-#X obj 121 7 lop~ 3;
-#X text 154 -14 > these two in the chain really clears the sound.;
-#X text 173 -86 -- this is the input;
-#X text 22 155 This is the patch for one oscillator unit of the ANS.
-It receives a volume \, and oscillates at the pre-set frequency.;
-#X floatatom 172 -58 5 0 0 0 - - -;
-#X obj 78 63 *~;
-#X obj 79 99 *~ 1;
+#N canvas 270 221 536 380 10;
+#X obj 71 258 dac~;
+#X obj 114 18 r vol1;
+#X obj 16 77 osc~ 440;
+#X obj 114 76 sig~;
+#X obj 114 111 lop~ 3;
+#X floatatom 215 50 5 0 0 0 - - -;
+#X obj 71 167 *~;
+#X obj 72 203 *~ 1;
+#X text 106 200 -- this in the actual patch is 1.0/numberOfUnits to
+keep the volume under control.;
+#X text 15 259;
+#X text 10 -77 This is the patch for one oscillator unit of the ANS.
+It receives a volume \, and oscillates at the pre-set frequency. There
+are 120 or 240 of these \, all at different frequncies \, connecting
+to the same dac~.;
+#X text 166 19 -- this is the input from processing app;
+#X text 254 48 this number is here just for testing \, not part of
+the unit.;
+#X text 147 91 > these two in the chain really clear the sound.;
 #X connect 1 0 3 0;
-#X connect 2 0 9 0;
+#X connect 2 0 6 0;
 #X connect 3 0 4 0;
-#X connect 4 0 9 1;
-#X connect 8 0 3 0;
-#X connect 9 0 10 0;
-#X connect 10 0 0 0;
-#X connect 10 0 0 1;
+#X connect 4 0 6 1;
+#X connect 5 0 3 0;
+#X connect 6 0 7 0;
+#X connect 7 0 0 0;
+#X connect 7 0 0 1;
