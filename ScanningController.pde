@@ -65,7 +65,7 @@ public class ScanningController {
     if (isEnabled)      
       ticks.setEnabled(false);
 
-    currentScanLine = (currentScanLine+steps) % workBuffer.width;
+    currentScanLine = (workBuffer.width + currentScanLine+steps) % workBuffer.width;
     drawScanline();
     sonifyScanline();
     
