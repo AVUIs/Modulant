@@ -27,12 +27,12 @@ Here is the current list of keybindings:
     Ctrl-y  redo 
 
 ### Sonification Control
-    Space                  toggle scanning 
+    Space                  resume/pause scanning 
     Left/Right             step 1px 
     Ctrl-Left/Right        step 10px 
     Shift-Ctrl-Left/Right  step 50px 
-    m  toggle sound 
-    g  toggle grid;
+    m                      mute/unmute sound 
+    g                      toggle grid;
 
 ### File Operations 
     Ctrl-o  load background image 
@@ -42,7 +42,7 @@ Here is the current list of keybindings:
     0         black (eraser) 
     1:8       Solarized base colours 
     Ctrl-1:8  Solarized accents 
-    9  white
+    9         white
 
 ### Help
     h  toggle help (this text)
@@ -60,9 +60,9 @@ Install (unpack) into your `sketchbook/libraries` folder:
 
 ## Tips
 
-- Images that you load should light features on dark backgrounds. The brightness of each pixel determines the volume of the associated oscillator -- if the majority of your image is light, then all you're going to hear is a loud and harsh noise.
+- Images that you load to sonify should have light features on dark backgrounds. The brightness of each pixel determines the volume of the associated oscillator -- if the majority of your image is bright, then all you're going to hear is a loud and harsh noise.
 
-- Also, when drawing, better to avoid bright and long vertical lines&regions -- these will turn on a lot of oscillator in one go, which may sound unpleasant (unless you know what you're doing).
+- Also, when drawing, it's better to avoid bright and long vertical lines/regions -- these will turn on a lot of oscillators in one go, which may sound unpleasant (unless you know what you're doing).
 
 ## Example images for sonification
 
