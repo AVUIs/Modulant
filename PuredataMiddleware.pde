@@ -64,6 +64,8 @@ public class PureDataMiddleware {
 
   void generatePatchfile(String patchfileName, float freq0, int nUnits, float intervalRatio) {
 
+    float amplitudeScaleDown = 1.0 / nUnits; 
+
     PrintWriter patch = createWriter(patchfileName);
 
     patch.println("#N canvas 1000 70 762 624 10;");  
@@ -79,11 +81,12 @@ public class PureDataMiddleware {
 
       patch.println("#X obj 100 100 sig~;");     // 4
       patch.println("#X obj 200 200 lop~ 3;");   // 5
+      patch.println("#X obj 300 300 *~ " + amplitudeScaleDown + ";");   // 6
     }
 
     int elem = 0;
     for (int unit=0; unit < nUnits; unit++) {
-      elem = unit*5;  //patch.println("elem: " + elem);
+      elem = unit*6;  //patch.println("elem: " + elem);
 
       patch.println("#X connect " + (elem+1) + " 0 " + (elem+4) + " 0;");
       patch.println("#X connect " + (elem+4) + " 0 " + (elem+5) + " 0;");
@@ -94,8 +97,10 @@ public class PureDataMiddleware {
       //    patch.println("#X connect " + (elem+1) + " 0 " + (elem+3) + " 1;");
 
       patch.println("#X connect " + (elem+2) + " 0 " + (elem+3) + " 0;");
-      patch.println("#X connect " + (elem+3) + " 0 " + " 0 "    + " 0;");
-      patch.println("#X connect " + (elem+3) + " 0 " + " 0 "    + " 1;");
+      patch.println("#X connect " + (elem+3) + " 0 " + (elem+6) + " 0;");
+
+      patch.println("#X connect " + (elem+6) + " 0 " + " 0 "    + " 0;");
+      patch.println("#X connect " + (elem+6) + " 0 " + " 0 "    + " 1;");
 
     }
 
@@ -105,6 +110,18 @@ public class PureDataMiddleware {
 
   public void sendFloat(String receiver, float message) {
     pd.sendFloat(receiver, message);
+  }
+  
+  public void send(int unitNo, float message) {
+    pd.sendFloat("unit"+unitNo, message);
+  }
+
+  public void silenceAll() {
+    int nAllUnits = nOctaves*intervalsInOctave;
+
+    for (int unit=0; unit<nAllUnits; unit++) {
+      send(unit, 0.0);
+    }
   }
 
 }

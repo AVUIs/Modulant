@@ -22,8 +22,9 @@ public class Config {
   public float lowestFrequency = 16.352;
   public int bpm = 125;
   public int lengthInSeconds = 3 * 60; // 3 minutes
-  public int lengthInPixels = 512;
-  public int frameRate;
+  public int lengthInPixels = WIDTH; //FIXME
+  public String backgroundImage = "";
+
 
 
   // these are computed from the above and are actually used as
@@ -75,13 +76,17 @@ public class Config {
     return this;
   }
 
+  public Config backgroundImage(String backgroundImage) {
+    this.backgroundImage = backgroundImage;
+    return this;
+  }
+
 
   public Config update() {
     lengthInBeats = (float)lengthInSeconds/60 * bpm;
-    pixelsPerBeat = lengthInPixels/lengthInBeats;
+    pixelsPerBeat = Math.max(1.0, lengthInPixels/lengthInBeats); //FIXME: there's a bigger problem here than ensuring pbm>=1
     oneBeatInMs = 60 * 1000 / (float)bpm;
     oneTickInMs = oneBeatInMs / pixelsPerBeat;
-    frameRate = 1;
     return this;
   }
 
@@ -112,10 +117,6 @@ public class Config {
     return this.bpm;
   }
 
-  public int frameRate() {
-    return this.frameRate;
-  }
-
 
   public int lengthInBeats() {
     return Math.round(lengthInBeats);
@@ -138,9 +139,14 @@ public class Config {
     return octaves() * intervalsInOctave();
   }
 
+  public String backgroundImage() {
+    return this.backgroundImage;
+  }
+
 
   public String toString() {
-    return "bpm: " + bpm()
+    return "=Modulant="
+      + "\nbpm: " + bpm()
       + "\nlengthInSeconds: " + lengthInSeconds()
       + "\nlengthInPixels: " + lengthInPixels()
       + "\nlengthInBeats: " + lengthInBeats()
@@ -151,7 +157,8 @@ public class Config {
       + "\nintervalsInOctave: " + intervalsInOctave()
       + "\nintervalRatio: " + intervalRatio()
       + "\nlowestFrequency: " + lowestFrequency()
-      + "\nnumberOfAllIntervals: " + numberOfAllIntervals();
+      + "\nnumberOfAllIntervals: " + numberOfAllIntervals()
+      + "\nbackgroundImage: " + backgroundImage();
   }
 
 }

@@ -33,3 +33,4 @@ public static double nthroot(int n, double A, double p) {
 	}
 	return x;
 }
+
