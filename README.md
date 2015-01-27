@@ -54,8 +54,8 @@ Here is the current list of keybindings:
 
 Install (unpack) into your `sketchbook/libraries` folder:
 
-- [libpd/puredatap5](https://github.com/libpd/puredatap5)  [pdp5.zip](https://github.com/libpd/puredatap5/blob/master/pdp5.zip)
-- [TimedEvent](http://multiply.org/processing/)  [TimedEvents.zip](http://multiply.org/processing/TimedEvents.zip)
+- [libpd/puredatap5](https://github.com/libpd/puredatap5)  ([pdp5.zip](https://github.com/libpd/puredatap5/blob/master/pdp5.zip))
+- [TimedEvent](http://multiply.org/processing/)  ([TimedEvents.zip](http://multiply.org/processing/TimedEvents.zip))
 
 See this [short guide on installing libraries](http://www.learningprocessing.com/tutorials/libraries/) for the where and how if you are not sure.
 
