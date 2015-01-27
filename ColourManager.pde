@@ -1,5 +1,6 @@
 public class ColourManager  {
 
+  color activeColour = #ffffff;
 
   private color[] solarizedBase 
     = new color[] { #000000, #002b36, #073642, #586e75, #657b83, #839496, #93a1a1, #eee8d5, #fdf6e3, #ffffff };
@@ -13,8 +14,6 @@ public class ColourManager  {
   public ColourManager colourSelection(int index, boolean fromAccentRange) {
     color c;
     
-    //println(index - (int)'0');
-
     try {
       if (fromAccentRange)
         c = solarizedAccent[index - (int)'0'];
@@ -30,12 +29,12 @@ public class ColourManager  {
   }
   
   public ColourManager activeColour(color c) {
-    activeColor = c;
+    activeColour = c;
     return this;
   }
 
   public color activeColour() {
-    return activeColor;
+    return activeColour;
   }
 
 }

@@ -1,6 +1,10 @@
 public enum OctaveDivisions {
   SEMITONES (12),
-  QUARTERTONES (24);
+  QUARTERTONES (24),
+  TET36(36),
+  TET48(48),
+  TET60(60),
+  TET72(72);
 
   private int intervalsInOctave;
 

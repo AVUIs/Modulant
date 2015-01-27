@@ -27,7 +27,8 @@ public class DragAction extends EventHandler implements IDrawer {
   protected int current_y; // record moving mouseY
 
   protected color DEFAULT_FINAL_COLOR = color(255, 204, 0, 255); // full-opaque
-  protected color transcolor = color(255, 204, 0, 127); // half-transparent
+  protected color DEFAULT_TRANS_COLOR = color(255, 204, 0, 127); // half-transparent
+  protected color transcolor = -1; //HACK
   protected color finalcolor = -1; //HACK
 
 
@@ -70,7 +71,7 @@ public class DragAction extends EventHandler implements IDrawer {
     if (sizex == 0 && sizey == 0)
       return;
 
-    fill(transcolor);
+    fill(transcolor());
     dragStep.action(screen, start_x, start_y, current_x, current_y);
 
     for (PropagateTarget target : propagateTargets) { 
@@ -93,8 +94,8 @@ public class DragAction extends EventHandler implements IDrawer {
   void mouseDragged() {
     current_x = mouseX;
     current_y = mouseY;
-    noStroke();
-    fill(transcolor);
+    stroke(255,255,255);
+    fill(transcolor());
   }
 
   void mouseReleased() {
@@ -105,12 +106,8 @@ public class DragAction extends EventHandler implements IDrawer {
     dragStep.action(screen, start_x, start_y, current_x, current_y);
 
     for (PropagateTarget target : propagateTargets) {
-
-      // TODO: necessary to have the selected zone stay half-transparent;
-      // but enabling it also propagates the final colour to the
-      // workBuffer with other commands -- which is the correct thing,
-      // but needs proper color support.
       target.buffer.beginDraw();
+      target.buffer.noStroke();
       target.buffer.fill(finalcolor());
       target.buffer.endDraw();
       dragStep.action(target.buffer, start_x, start_y, current_x, current_y);
@@ -134,6 +131,14 @@ public class DragAction extends EventHandler implements IDrawer {
       return this.finalcolor;
     else 
       return colourManager.activeColour();
+  }
+
+  protected color transcolor() {
+    if (this.transcolor != -1) //HACK
+      return this.transcolor;
+    else 
+      return color(colourManager.activeColour(), 127);
+
   }
 
 }

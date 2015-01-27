@@ -38,10 +38,8 @@ DragAction freehandBrushDots;
 KeyboardUI keyboardUI;
 
 ColourManager colourManager;
-color activeColor = #ffffff;
 
 IDrawer activeDrawer = null;
-
 
 ScanningController scanningController;
 void onTimerEvent() { scanningController.onTimerEvent(); }
@@ -74,6 +72,7 @@ void setup() {
 
   size(WIDTH, HEIGHT);
   frameRate(30);
+  smooth();
 
 
   /* Buffers (Layers) */
@@ -97,18 +96,15 @@ void setup() {
   keyboardUI = new KeyboardUI();
   keyboardUI.start();
 
-
   colourManager = new ColourManager();
 
-
-  // start Puredata 
   pd = new PureDataMiddleware(this,config);
   pd.start();
 
   scanningController = new ScanningController(this, config, workBuffer, effectsBuffer);
 
   undoManager = new UndoManager();
-  undoManager.setLimit(5);
+  undoManager.setLimit(10);
 
 
   /* Drawing modes */
@@ -118,7 +114,6 @@ void setup() {
                      new IDragStep() { 
                        public void action(PGraphics g, int start_x, int start_y, int current_x, int current_y) {
                          g.beginDraw();
-                         g.noStroke();
                          g.rect(start_x, start_y, current_x-start_x,current_y-start_y);  
                          g.endDraw();
                        } 
@@ -131,7 +126,6 @@ void setup() {
                      new IDragStep() { 
                        public void action(PGraphics g, int start_x, int start_y, int current_x, int current_y) {
                          g.beginDraw();
-                         g.noStroke();
                          g.rect(start_x, start_y, current_x-start_x,current_y-start_y);  
                          g.endDraw();
                        } 
@@ -144,7 +138,6 @@ void setup() {
                      new IDragStep() { 
                        public void action(PGraphics g, int start_x, int start_y, int current_x, int current_y) {
                          g.beginDraw();
-                         g.noStroke();
                          g.triangle(start_x, start_y, current_x,current_y, current_x,start_y-(current_y-start_y));  
                          g.endDraw();
                        } 
@@ -157,7 +150,6 @@ void setup() {
                      new IDragStep() { 
                        public void action(PGraphics g, int start_x, int start_y, int current_x, int current_y) {
                          g.beginDraw();
-                         g.noStroke();
                          g.ellipse(start_x,start_y, current_x-start_x,start_y-current_y);  
                          g.endDraw();
                        } 
@@ -170,7 +162,6 @@ void setup() {
                      new IDragStep() { 
                        public void action(PGraphics g, int start_x, int start_y, int current_x, int current_y) {
                          g.beginDraw();
-                         g.noStroke();
                          g.ellipse(current_x, current_y, 10, 10);  
                          g.endDraw();
                        } 
@@ -186,7 +177,6 @@ void setup() {
                          int radius = 15;
                          int maxdotsize = 2;
                          g.beginDraw();
-                         g.noStroke();  
                          for (int n=0; n<nDots; n++) {
                            float dotsize = random(1.0)*maxdotsize;
                            float r = noise((float)current_x, (float)current_y, (float)n) * radius;
@@ -200,12 +190,6 @@ void setup() {
                        } 
                      })
     .propagateTo(workBuffer, true);
-
-
-  color transcolor = color(255, 204, 0);
-  fill(transcolor);
-  smooth();
-  noStroke();
 
 }
 
