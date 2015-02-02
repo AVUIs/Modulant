@@ -1,0 +1,31 @@
+#N canvas 268 223 536 380 10;
+#X obj 71 274 dac~;
+#X obj 114 34 r vol1;
+#X obj 16 93 osc~ 440;
+#X floatatom 215 66 5 0 0 0 - - -;
+#X obj 71 183 *~;
+#X obj 72 219 *~ 1;
+#X text 106 216 -- this in the actual patch is 1.0/numberOfUnits to
+keep the volume under control.;
+#X text 15 275 comment;
+#X text 166 35 -- this is the input from processing app;
+#X text 254 64 this number is here just for testing \, not part of
+the unit.;
+#X msg 99 110 1 150 \, 0.9 150 150 \, 0 1000 500;
+#X obj 99 150 vline~;
+#X obj 80 41 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X text 10 -77 This is the patch for one oscillator unit of the ANS.
+It receives a volume \, and oscillates at the pre-set frequency. There
+are 120 or 240 of these \, all at different frequncies \, connecting
+to the same dac~. This is a new unit candidate that uses an ADSR envelope
+generator -- which may produce a smoother sound.;
+#X connect 1 0 10 0;
+#X connect 2 0 4 0;
+#X connect 3 0 10 0;
+#X connect 4 0 5 0;
+#X connect 5 0 0 0;
+#X connect 5 0 0 1;
+#X connect 10 0 11 0;
+#X connect 11 0 4 1;
+#X connect 12 0 10 0;

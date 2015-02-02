@@ -116,6 +116,12 @@ public class PureDataMiddleware {
     pd.sendFloat("unit"+unitNo, message);
   }
 
+  public void send(float[] message) {
+    for (int unitNo = 0; unitNo<message.length; unitNo++){
+      pd.sendFloat("unit"+unitNo, message[unitNo]);
+    }
+  }
+
   public void silenceAll() {
     int nAllUnits = nOctaves*intervalsInOctave;
 

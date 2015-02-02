@@ -1,7 +1,10 @@
 public class GridController {
   
-  int nCellsX = 10;
-  int nCellsY = 10;
+  int nCellsX;
+  int nCellsY;
+  float xspacing;
+  float yspacing;
+
   color gridColour;
   PGraphics gridBuffer;
 
@@ -12,6 +15,12 @@ public class GridController {
     this.nCellsX = nCellsX;
     this.nCellsY = nCellsY;
     this.gridColour = gridColour;
+
+    int gWidth = gridBuffer.width;
+    int gHeight = gridBuffer.height;
+
+    xspacing = Math.max(10, (float)gWidth/nCellsX);
+    yspacing = Math.max(10, (float)gHeight/nCellsY);   
     
     draw();
   }
@@ -32,14 +41,11 @@ public class GridController {
       gridBuffer.endDraw();
       return this;
     }
-     
+
     int gWidth = gridBuffer.width;
     int gHeight = gridBuffer.height;
 
     
-    float xspacing = Math.max(10, (float)gWidth/nCellsX);
-    float yspacing = Math.max(10, (float)gHeight/nCellsY);
-
     gridBuffer.beginDraw();
 
     gridBuffer.background(255,0);    
@@ -58,4 +64,27 @@ public class GridController {
 
     return this;
   }
+
+
+  public GridController mark(int x, int y, PGraphics buffer) {
+
+    int bHeight = buffer.height;
+    int ymax = (int)((float)bHeight/yspacing);
+    int yy = ymax - y + 1;
+    int xx = x-1;
+    
+    buffer.beginDraw();
+    buffer.noFill();
+    buffer.stroke(255);
+    buffer.ellipse(xx*xspacing, yy*yspacing, 10, 10);
+    //buffer.line(xx*xspacing, yy*yspacing, xx*xspacing+5, yy*yspacing);
+    buffer.endDraw();
+    return this;
+  }
+
+
+  public GridController mark(int x, int y) {
+    return mark(x,y,gridBuffer);
+  }
+  
 }

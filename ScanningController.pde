@@ -1,10 +1,10 @@
-public class ScanningController {
+public class ScanningController extends EventHandler {
 
-  TimedEventGenerator ticks;
-  //HighResolutionTimer ticks;
+  TimedEventGenerator timer;
+  //HighResolutionTimer timer;
   int lastMillis = 0;
 
-  int currentScanLine = -1;
+  int currentScanLine = 0;
   PGraphics workBuffer;
   PGraphics effectsBuffer;
   PApplet parent;
@@ -14,32 +14,47 @@ public class ScanningController {
   int workBufferHeight;
 
   boolean isMuted = true;
-      
+
+  float[] lastVol;
+  float[] currVol;
+
+  int ACTIVE_TOP_BAR_HEIGHT = 10;
+  boolean mouseMovingTheScanline = false;
+  
   public ScanningController (PApplet parent, Config appConfig, PGraphics workBuffer, PGraphics effectsBuffer) {
     this.parent = parent;
     this.appConfig = appConfig;
     this.workBuffer = workBuffer;
     this.effectsBuffer = effectsBuffer;
 
-    ticks = new TimedEventGenerator(parent);
-    ticks.setEnabled(false);
-    ticks.setIntervalMs(appConfig.oneTickInMs());
+    timer = new TimedEventGenerator(parent);
+    timer.setEnabled(false);
+    timer.setIntervalMs(appConfig.oneTickInMs());
 
     // takes up unnecessarily high CPU
-    //ticks = new HighResolutionTimer(parent, appConfig.oneTickInMs());
-    //ticks.start();
+    //timer = new HighResolutionTimer(parent, appConfig.oneTickInMs());
+    //timer.start();
+
+    lastVol = new float[appConfig.numberOfAllIntervals()];    
+    currVol = new float[appConfig.numberOfAllIntervals()];
+
+    for (int i=0; i<appConfig.numberOfAllIntervals(); i++)
+      lastVol[0] = 0.0;
+    
   }
 
   void start() {
-    ticks.setEnabled(true);
+    super.start();
+    //timer.setEnabled(true);
   }
 
   void stop() {
-    ticks.setEnabled(false);
+    super.stop();
+    //timer.setEnabled(false);
   }
 
   void toggleMovement() {
-    ticks.setEnabled(!ticks.isEnabled());        
+    timer.setEnabled(!timer.isEnabled());        
   }
 
   void toggleSound() {
@@ -61,26 +76,28 @@ public class ScanningController {
 
 
   void moveScanline(int steps) {
-    boolean isEnabled = ticks.isEnabled();
+    boolean isEnabled = timer.isEnabled();
     if (isEnabled)      
-      ticks.setEnabled(false);
+      timer.setEnabled(false);
 
     currentScanLine = (workBuffer.width + currentScanLine+steps) % workBuffer.width;
     drawScanline();
     sonifyScanline();
     
     if (isEnabled)
-      ticks.setEnabled(isEnabled);
+      timer.setEnabled(isEnabled);
   }
 
   void setCurrentScanLine(int pos) {  
-    boolean isEnabled = ticks.isEnabled();
+    boolean isEnabled = timer.isEnabled();
     if (isEnabled)      
-      ticks.setEnabled(false);
+      timer.setEnabled(false);
+    
     currentScanLine = pos;
     drawScanline();
+    
     if (isEnabled)
-      ticks.setEnabled(isEnabled);
+      timer.setEnabled(isEnabled);
   }
 
 
@@ -93,10 +110,11 @@ public class ScanningController {
     if (currentScanLine == 0)
       println("TOCK: " + millis());
 
-    // scan the next line
-    currentScanLine = (currentScanLine+1) % workBuffer.width;
+    // scan the current line
     drawScanline();
     sonifyScanline();
+
+    currentScanLine = (currentScanLine+1) % workBuffer.width;
 
     //  System.out.println("spent: " + (millis()-lastMillis));
   }
@@ -111,7 +129,63 @@ public class ScanningController {
     effectsBuffer.endDraw();
   }
 
-  void sonifyScanline() {
+
+   void sonifyScanline() {
+    if (this.isMuted)
+      return;
+    
+    int numberOfAllIntervals = appConfig.numberOfAllIntervals();
+
+    workBuffer.loadPixels();
+    color[] wPixels = workBuffer.pixels;
+    workBufferWidth = workBuffer.width;
+    workBufferHeight = workBuffer.height;
+    
+
+    float wHeightStep = (float)workBufferHeight/numberOfAllIntervals;
+
+    int nChanged = 0;
+
+    // read pixels every wHeightStep
+    for (int interval=0; interval < numberOfAllIntervals; interval++) {
+      
+      int unitNo = (numberOfAllIntervals-1) - interval;
+      
+      int thisPixelIndex = Math.round(interval*wHeightStep)*workBufferWidth + currentScanLine;
+      int safePixelIndex = Math.max(0,Math.min(thisPixelIndex, wPixels.length-1));
+      color c = wPixels[safePixelIndex];
+      
+      float volume = brightness(c) / 255;
+
+      // if (volume >= 1.0)
+      //   println(volume + " @ " + currentScanLine+","+interval*wHeightStep + "(" + unitNo +")");
+      
+      try {
+        currVol[unitNo] = volume;
+      } catch (Exception e) {
+        println("unitNo:"+ unitNo + " wHeightStep:"+wHeightStep + " workBufferHeight:"+workBufferHeight + " numberOfAllIntervals:"+numberOfAllIntervals); 
+      }
+      
+      // if (Math.abs(volume - lastVol[unitNo]) > 0.0001) { // FIXME some arbitrary threshold for now
+      //   nChanged++;        
+      //   pd.send(unitNo, volume);
+      // }
+      
+      unitNo--;
+    }
+
+    //println(Math.round((float)nChanged/numberOfAllIntervals*100.0) + "% -- " + nChanged + " / " + numberOfAllIntervals);
+
+    pd.send(currVol);
+    
+    System.arraycopy(currVol, 0, lastVol, 0, numberOfAllIntervals);    
+  }
+
+
+ 
+  
+   void sonifyScanlinePixelIteration() {
+    // void sonifyScanline() {
     if (this.isMuted)
       return;
 
@@ -125,19 +199,34 @@ public class ScanningController {
 
     float wHeightStep = (float)workBufferHeight/numberOfAllIntervals;
 
+    int nChanged = 0;
+    
     // read pixels every wHeightStep
-    int unitNo=numberOfAllIntervals;
+    int unitNo=numberOfAllIntervals-1;
     for (float y=0; y<workBufferHeight; y += wHeightStep) {
 
       int thisPixelIndex = Math.round(y)*workBufferWidth + currentScanLine;
       int safePixelIndex = Math.max(0,Math.min(thisPixelIndex, wPixels.length-1));      
       color c = wPixels[safePixelIndex];
 
-      float brightness = brightness(c) / 255;    
-      pd.send(unitNo, brightness);
+      float volume = brightness(c) / 255;
+      try {
+        currVol[unitNo] = volume;
+      } catch (Exception e) {
+        println("y:"+ y + " wHeightStep:"+wHeightStep + " workBufferHeight:"+workBufferHeight + " numberOfAllIntervals:"+numberOfAllIntervals); 
+      }
+      
+      if (Math.abs(volume - lastVol[unitNo]) > 0.001) { // FIXME some arbitrary threshold for now
+        nChanged++;        
+        pd.send(unitNo, volume);
+      }
+      
       unitNo--;
     }
 
+    //    println((float)nChanged/numberOfAllIntervals*100 + "% -- " + nChanged + " / " + numberOfAllIntervals);
+
+    System.arraycopy(currVol, 0, lastVol, 0, numberOfAllIntervals);    
   }
 
 
@@ -180,4 +269,21 @@ public class ScanningController {
     }
   }
 
+
+  void mousePressed() {
+    if (mouseY < ACTIVE_TOP_BAR_HEIGHT) {
+      mouseMovingTheScanline = true;
+      setCurrentScanLine(mouseX);
+    }
+  }
+
+  void mouseDragged() {
+    if (mouseMovingTheScanline)
+      setCurrentScanLine(mouseX);
+  }
+
+
+  void mouseReleased() {
+    mouseMovingTheScanline = false;
+  }
 }

@@ -105,6 +105,9 @@ public class KeyboardUI extends EventHandler {
         activeDrawer.start();
       }
       break;
+    case KeyEvent.VK_A:
+      //pd.send(113, 10.0);
+      break;
     default:
       if (key >= '0' && key <= '9')
         colourManager.colourSelection(key, isKeyPressed(KeyEvent.VK_CONTROL));

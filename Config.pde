@@ -1,6 +1,8 @@
 public enum OctaveDivisions {
   SEMITONES (12),
   QUARTERTONES (24),
+  TET12(12),
+  TET24(24),
   TET36(36),
   TET48(48),
   TET60(60),

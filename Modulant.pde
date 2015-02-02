@@ -63,9 +63,27 @@ void setup() {
     .lengthInSeconds(30)
     .bpm(125)
     .octaves(10)
-    .intervalsInOctave(OctaveDivisions.SEMITONES)
+    .intervalsInOctave(OctaveDivisions.TET24)
     .backgroundImage("data/klee-lines-dots-drawing-bw.jpg")
     .update();
+
+  // config = new Config()
+  //   .lengthInSeconds(30)
+  //   .bpm(125)
+  //   .octaves(5)
+  //   .lowestFrequency(60)
+  //   .intervalsInOctave(OctaveDivisions.TET48)
+  //   .backgroundImage("data/klee-lines-dots-drawing-bw.jpg")
+  //   .update();
+
+
+  // config = new Config()
+  //   .lengthInSeconds(30)
+  //   .bpm(125)
+  //   .octaves(4)
+  //   .intervalsInOctave(OctaveDivisions.TET72)
+  //   .backgroundImage("data/klee-lines-dots-drawing-bw.jpg")
+  //   .update();
 
   println(config);
 
@@ -102,6 +120,7 @@ void setup() {
   pd.start();
 
   scanningController = new ScanningController(this, config, workBuffer, effectsBuffer);
+  scanningController.start();
 
   undoManager = new UndoManager();
   undoManager.setLimit(10);
@@ -193,9 +212,11 @@ void setup() {
 
 }
 
-
 void draw() {
+
   background(0);
+
+  //grid.mark(5,5);
   
   image(workBuffer,0,0);
   image(gridBuffer,0,0);
