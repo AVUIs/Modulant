@@ -21,10 +21,19 @@ Here is the current list of keybindings:
     t       triangle mode 
     e       ellipse mode 
     f       freehand mode 
-    d       freehand w/ dots 
-    Shift-c clear all 
+	p       freehand paintbrush
+	d       freehand w/ dots
     Ctrl-z  undo 
-    Ctrl-y  redo 
+    Ctrl-y  redo
+	Shift-l clear all 
+
+### Selection Mode
+    s       selection mode
+	Ctrl-c  copy & interactively paste selection
+	Ctrl-x  cut & interactively paste selection
+	Escape  exit selection mode
+	b       blur selected region
+
 
 ### Sonification Control
     Space                  resume/pause scanning 
@@ -32,7 +41,7 @@ Here is the current list of keybindings:
     Ctrl-Left/Right        step 10px 
     Shift-Ctrl-Left/Right  step 50px 
     m                      mute/unmute sound 
-    g                      toggle grid;
+    g                      toggle grid
 
 ### File Operations 
     Ctrl-o  load background image 
@@ -45,8 +54,8 @@ Here is the current list of keybindings:
     9         white
 
 ### Help
-    h  toggle help (this text)
-
+    h         toggle help (this text)
+    Ctrl-q    exit application
 
 
 

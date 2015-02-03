@@ -12,6 +12,16 @@ public class UndoableEdit extends AbstractUndoableEdit {
   ArrayList<color[]> savedTargetsPixelsForRedo = new ArrayList<color[]>();
 
 
+  public UndoableEdit (PGraphics buffer) {
+    this(new PropagateTarget(buffer));
+  }
+
+  public void end() {
+    finalize();
+    undoManager.addEdit(this);
+  }
+
+  
   public UndoableEdit (PropagateTarget savedTarget) {
     ArrayList<PropagateTarget> savedTargets = new ArrayList<PropagateTarget>();
     savedTargets.add(savedTarget);

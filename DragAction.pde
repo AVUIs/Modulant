@@ -149,5 +149,14 @@ public static void stopAllDragActionHandlers() {
     if (handler instanceof DragAction) {
       ((DragAction)handler).stop();
     }
-  }    
+  }
 }
+
+public static void stopAllDrawHandlers() {
+  for (Object handler : EVENT_LISTENERS) {
+    if (handler instanceof DragAction || handler instanceof SelectionController) {
+      ((EventHandler)handler).stop();
+    }
+  }
+}
+

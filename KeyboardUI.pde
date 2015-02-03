@@ -47,37 +47,48 @@ public class KeyboardUI extends EventHandler {
       scanningController.toggleSound();
       break;
     case KeyEvent.VK_R:
-      stopAllDragActionHandlers();
+      stopAllDrawHandlers();
+      activeCursor = ARROW;
       activeDrawer = rubberBandRectangle;
       activeDrawer.start();
       break;
      case KeyEvent.VK_T:
-      stopAllDragActionHandlers();
+      stopAllDrawHandlers();
+      activeCursor = ARROW;
       activeDrawer = rubberBandTriangle;
       activeDrawer.start();
       break;
      case KeyEvent.VK_E:
-      stopAllDragActionHandlers();
+      stopAllDrawHandlers();
+      activeCursor = ARROW;
       activeDrawer = rubberBandEllipse;
       activeDrawer.start();
       break;
-     case KeyEvent.VK_F:
-      stopAllDragActionHandlers();
+    case KeyEvent.VK_F:
+      stopAllDrawHandlers();
+      activeCursor = ARROW;
       activeDrawer = freehandBrushStandard;
       activeDrawer.start();
       break;
      case KeyEvent.VK_D:
-      stopAllDragActionHandlers();
+      stopAllDrawHandlers();
+      activeCursor = ARROW;
       activeDrawer = freehandBrushDots;
       activeDrawer.start();
       break;
+     case KeyEvent.VK_P:
+      stopAllDrawHandlers();
+      activeCursor = ARROW;
+      activeDrawer = freehandBrushPaintEffect;
+      activeDrawer.start();
+      break;      
     case KeyEvent.VK_G:
       grid.toggle();
       break;
     case KeyEvent.VK_H:
       onscreenHelp.toggle();
       break;
-    case KeyEvent.VK_C:
+    case KeyEvent.VK_L:
       if (isKeyPressed(KeyEvent.VK_SHIFT)) {
         imageManager.clear();        
       }
@@ -100,11 +111,44 @@ public class KeyboardUI extends EventHandler {
       if (isKeyPressed(KeyEvent.VK_CONTROL)) {
         imageManager.saveAsImage();
       } else {
-        stopAllDragActionHandlers();
+        stopAllDrawHandlers();
+        activeCursor = CROSS;
         activeDrawer = rubberBandSelection;
         activeDrawer.start();
+        selectionController.start();
       }
       break;
+    case KeyEvent.VK_B:
+      stopAllDrawHandlers();
+      activeCursor = ARROW;
+      activeDrawer = rubberBandSelection;
+      activeDrawer.start();
+      selectionController.mode("blur").start();
+      break;
+    case KeyEvent.VK_C:
+      if (isKeyPressed(KeyEvent.VK_CONTROL) && selectionController.hasSelection()) {
+        selectionController.copySelection().mode("interactivePaste");
+      }
+      break;
+    case KeyEvent.VK_V:
+      if (isKeyPressed(KeyEvent.VK_CONTROL) && selectionController.hasSelection()) {
+        selectionController.mode("interactivePaste");
+      }
+      break;
+    case KeyEvent.VK_X:
+      if (isKeyPressed(KeyEvent.VK_CONTROL) && selectionController.hasSelection()) {
+        selectionController.cutSelection().mode("interactivePaste");
+      }
+      break;
+
+    case KeyEvent.VK_ESCAPE:
+      key = 0;
+      selectionController.clear().mode("mark");
+      break;
+      case KeyEvent.VK_Q:
+        if (isKeyPressed(KeyEvent.VK_CONTROL))
+          exit();        
+        break;
     case KeyEvent.VK_A:
       //pd.send(113, 10.0);
       break;

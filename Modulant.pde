@@ -25,6 +25,7 @@ int HEIGHT = 600;
 PGraphics workBuffer;
 PGraphics effectsBuffer;
 PGraphics gridBuffer;
+PGraphics selectionBuffer;
 
 PureDataMiddleware pd;
 
@@ -34,6 +35,8 @@ DragAction rubberBandTriangle;
 DragAction rubberBandEllipse;
 DragAction freehandBrushStandard;
 DragAction freehandBrushDots;
+DragAction freehandBrushPaintEffect;
+
 
 KeyboardUI keyboardUI;
 
@@ -52,7 +55,9 @@ UndoManager undoManager;
 
 ImageManager imageManager;
 
+SelectionController selectionController;
 
+int activeCursor = ARROW;
 
 
 void setup() {
@@ -63,7 +68,7 @@ void setup() {
     .lengthInSeconds(30)
     .bpm(125)
     .octaves(10)
-    .intervalsInOctave(OctaveDivisions.TET24)
+    .intervalsInOctave(OctaveDivisions.TET12)
     .backgroundImage("data/klee-lines-dots-drawing-bw.jpg")
     .update();
 
@@ -97,6 +102,7 @@ void setup() {
 
   workBuffer = createGraphics(WIDTH,HEIGHT);
   effectsBuffer = createGraphics(WIDTH, HEIGHT);
+  selectionBuffer = createGraphics(WIDTH, HEIGHT);
   gridBuffer = createGraphics(WIDTH, HEIGHT);
   gridBuffer.background(255,0);
 
@@ -123,8 +129,11 @@ void setup() {
   scanningController.start();
 
   undoManager = new UndoManager();
-  undoManager.setLimit(10);
+  undoManager.setLimit(5);
 
+  selectionController = new SelectionController(this, selectionBuffer, workBuffer);
+  //  selectionController.start();
+  
 
   /* Drawing modes */
 
@@ -136,8 +145,9 @@ void setup() {
                          g.rect(start_x, start_y, current_x-start_x,current_y-start_y);  
                          g.endDraw();
                        } 
-                     }, color(255,204,0,127))
-    .propagateTo(effectsBuffer);
+                     }, color(152,251,152,127))
+    //                     color(255,204,0,127))
+    .propagateTo(selectionBuffer);
 
 
   rubberBandRectangle
@@ -174,25 +184,48 @@ void setup() {
                        } 
                      })
     .propagateTo(workBuffer);
-
-
+    
+  
   freehandBrushStandard
     = new DragAction(this.g, 
                      new IDragStep() { 
                        public void action(PGraphics g, int start_x, int start_y, int current_x, int current_y) {
                          g.beginDraw();
-                         g.ellipse(current_x, current_y, 10, 10);  
+                         //g.ellipse(current_x, current_y, 10, 10);
+                         g.stroke(colourManager.activeColour());
+                         for ( int i=0;i<30;i++) {
+                           g.line(mouseX+random(5), mouseY+random(5), pmouseX+random(5), pmouseY+random(5));
+                           //g.line(start_x+random(10), start_y+random(10), current_x+random(10), current_y+random(10));
+                           g.strokeWeight(1);
+                         }
                          g.endDraw();
                        } 
                      })
     .propagateTo(workBuffer, true);
 
 
+  freehandBrushPaintEffect
+    = new DragAction(this.g,
+                     new IDragStep() {
+                       public void action(PGraphics g, int start_x, int start_y, int current_x, int current_y) {
+                         float thickness = 1f;
+                         float maxThickness = 10f;
+                         g.beginDraw();
+                         g.stroke(colourManager.activeColour());
+                         g.strokeWeight(thickness);
+                         g.line(mouseX, mouseY, pmouseX, pmouseY);                        
+                         g.endDraw();
+                         thickness = Math.min(thickness+0.25, maxThickness);
+                       }
+                     })
+    .propagateTo(workBuffer, true);
+  
+  
   freehandBrushDots
     = new DragAction(this.g, 
                      new IDragStep() { 
                        public void action(PGraphics g, int start_x, int start_y, int current_x, int current_y) {
-                         int nDots = 10;
+                         int nDots = 3;
                          int radius = 15;
                          int maxdotsize = 2;
                          g.beginDraw();
@@ -210,6 +243,9 @@ void setup() {
                      })
     .propagateTo(workBuffer, true);
 
+  activeDrawer = freehandBrushPaintEffect;
+  activeDrawer.start();
+  
 }
 
 void draw() {
@@ -217,10 +253,17 @@ void draw() {
   background(0);
 
   //grid.mark(5,5);
+
+  if (mouseY < ScanningController.ACTIVE_TOPBAR_HEIGHT) {
+    cursor(HAND);
+  } else {
+    cursor(activeCursor);
+  }
   
   image(workBuffer,0,0);
   image(gridBuffer,0,0);
   image(effectsBuffer,0,0);
+  image(selectionBuffer,0,0);
   if (activeDrawer != null)
     activeDrawer.draw();
   image(onscreenHelp.getBuffer(),0,0);

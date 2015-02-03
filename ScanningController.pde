@@ -1,5 +1,9 @@
 public class ScanningController extends EventHandler {
-
+  
+  static final int ACTIVE_TOPBAR_HEIGHT = 20;
+  boolean mouseMovingTheScanline = false;
+  
+  
   TimedEventGenerator timer;
   //HighResolutionTimer timer;
   int lastMillis = 0;
@@ -17,9 +21,6 @@ public class ScanningController extends EventHandler {
 
   float[] lastVol;
   float[] currVol;
-
-  int ACTIVE_TOP_BAR_HEIGHT = 10;
-  boolean mouseMovingTheScanline = false;
   
   public ScanningController (PApplet parent, Config appConfig, PGraphics workBuffer, PGraphics effectsBuffer) {
     this.parent = parent;
@@ -271,7 +272,7 @@ public class ScanningController extends EventHandler {
 
 
   void mousePressed() {
-    if (mouseY < ACTIVE_TOP_BAR_HEIGHT) {
+    if (mouseY < ACTIVE_TOPBAR_HEIGHT) {
       mouseMovingTheScanline = true;
       setCurrentScanLine(mouseX);
     }
