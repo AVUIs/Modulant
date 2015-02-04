@@ -64,7 +64,10 @@ public class DragAction extends EventHandler implements IDrawer {
 
 
   void draw() {
-
+    if (toolbar.pointIsInside(start_x, start_y)
+        || toolbar.pointIsInside(current_x, current_y))
+      return;
+    
     int sizex = current_x - start_x;
     int sizey = current_y - start_y;
 
@@ -83,8 +86,12 @@ public class DragAction extends EventHandler implements IDrawer {
   void mousePressed() {
     start_x = mouseX;
     start_y = mouseY;
+    
     mouseDragged(); // Reset vars
 
+    if (toolbar.pointIsInside(start_x, start_y))
+      return;
+    
     ArrayList<PropagateTarget> savedTargets = new ArrayList<PropagateTarget>(propagateTargets);
     savedTargets.add(new PropagateTarget(screen, false));
 
@@ -94,14 +101,21 @@ public class DragAction extends EventHandler implements IDrawer {
   void mouseDragged() {
     current_x = mouseX;
     current_y = mouseY;
+    
+    if (toolbar.pointIsInside(current_x, current_y))
+      return;
+
     stroke(255,255,255);
     fill(transcolor());
   }
 
   void mouseReleased() {
-
     //undoableEdit.updateBoundingBox(start_x, start_y, current_x, current_y);
 
+    if (toolbar.pointIsInside(start_x, start_y)
+        || toolbar.pointIsInside(current_x, current_y))
+      return;
+    
     fill(finalcolor());
     dragStep.action(screen, start_x, start_y, current_x, current_y);
 
@@ -113,10 +127,13 @@ public class DragAction extends EventHandler implements IDrawer {
       dragStep.action(target.buffer, start_x, start_y, current_x, current_y);
     }
 
-    undoableEdit.finalize();
+    try {
+      undoableEdit.finalize();   
+      undoManager.addEdit(undoableEdit);
+    } catch(Exception e) {
+      e.printStackTrace(System.out);
+    }
     
-    undoManager.addEdit(undoableEdit);
-
     reset();    
   }
 
@@ -154,7 +171,10 @@ public static void stopAllDragActionHandlers() {
 
 public static void stopAllDrawHandlers() {
   for (Object handler : EVENT_LISTENERS) {
-    if (handler instanceof DragAction || handler instanceof SelectionController) {
+    if (handler instanceof DragAction
+        || handler instanceof SelectionController  //HACK
+        || handler instanceof ZoomAndPanController //HACK
+        ) {
       ((EventHandler)handler).stop();
     }
   }

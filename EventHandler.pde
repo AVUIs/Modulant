@@ -7,6 +7,7 @@ interface IEventHandler {
   void mouseMoved();
   void mouseDragged();
   void mouseReleased();
+  void mouseWheel(MouseEvent e);
   void keyPressed();
   void keyReleased();
   void keyTyped();
@@ -26,6 +27,8 @@ public class EventHandler implements IEventHandler {
   void mouseDragged() {
   }
   void mouseReleased() {
+  }
+  void mouseWheel(MouseEvent e) {
   }
   void keyPressed() {
   }
@@ -64,6 +67,11 @@ void mouseDragged() {
 void mouseReleased() {
   for(EventHandler handler: EVENT_LISTENERS) {
    handler.mouseReleased();
+  }
+}
+void mouseWheel(MouseEvent e) {
+  for (EventHandler handler: EVENT_LISTENERS) {
+    handler.mouseWheel(e);
   }
 }
 void keyPressed() {

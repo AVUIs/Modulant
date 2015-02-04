@@ -3,6 +3,12 @@
 
 import java.awt.event.KeyEvent;
 
+// FIXME: to get the toolbar and the keyboardUI operate in sync,
+// we need to do the activisations via the cp5 objects.
+// this sucks, as it makes cp5 more necessary than it's worth.
+// cf Toolbar
+
+
 public class KeyboardUI extends EventHandler {
   
   //
@@ -39,67 +45,74 @@ public class KeyboardUI extends EventHandler {
         scanningController.moveScanline(1);
       break;
     case KeyEvent.VK_SPACE:
-      scanningController.toggleSound();
-      scanningController.toggleMovement();
+      //toggleSoundAndMovement();
+      toolbar.toggle_play();
       break;
     case KeyEvent.VK_M:
       //      pd.silenceAll();
-      scanningController.toggleSound();
+      //toggleSound();
+      toolbar.toggle_mute();
       break;
     case KeyEvent.VK_R:
-      stopAllDrawHandlers();
-      activeCursor = ARROW;
-      activeDrawer = rubberBandRectangle;
-      activeDrawer.start();
+      //rectangle_mode();
+      toolbar.activate_mode("Rectangle");
       break;
      case KeyEvent.VK_T:
-      stopAllDrawHandlers();
-      activeCursor = ARROW;
-      activeDrawer = rubberBandTriangle;
-      activeDrawer.start();
+       if (isKeyPressed(KeyEvent.VK_SHIFT))
+         toolbar.toggle();
+       else
+         //triangle_mode();
+         toolbar.activate_mode("Triangle");
       break;
      case KeyEvent.VK_E:
-      stopAllDrawHandlers();
-      activeCursor = ARROW;
-      activeDrawer = rubberBandEllipse;
-      activeDrawer.start();
+       //ellipse_mode();
+       toolbar.activate_mode("Ellipse");
       break;
     case KeyEvent.VK_F:
-      stopAllDrawHandlers();
-      activeCursor = ARROW;
-      activeDrawer = freehandBrushStandard;
-      activeDrawer.start();
+      //freehandBrushStandard_mode();
+      toolbar.activate_mode("Freeline");
       break;
      case KeyEvent.VK_D:
-      stopAllDrawHandlers();
-      activeCursor = ARROW;
-      activeDrawer = freehandBrushDots;
-      activeDrawer.start();
+       //freehandBrushDots_mode();
+       toolbar.activate_mode("Dots");
       break;
      case KeyEvent.VK_P:
-      stopAllDrawHandlers();
-      activeCursor = ARROW;
-      activeDrawer = freehandBrushPaintEffect;
-      activeDrawer.start();
+       //freehandBrushPaintEffect_mode();
+       toolbar.activate_mode("Paintbrush");
       break;      
     case KeyEvent.VK_G:
       grid.toggle();
       break;
     case KeyEvent.VK_H:
-      onscreenHelp.toggle();
+      toggle_help();
       break;
     case KeyEvent.VK_L:
       if (isKeyPressed(KeyEvent.VK_SHIFT)) {
-        imageManager.clear();        
+        clear_workbuffer();
       }
+      break;
     case KeyEvent.VK_Z:
       if (isKeyPressed(KeyEvent.VK_CONTROL)) {
-        try { undoManager.undo(); } catch(Exception e) {};
-      }
+        undo();
+      } else {
+        // TODO: enable when done
+        // stopAllDrawHandlers();
+        // activeCursor = HAND;      
+        // zoomAndPanController.start();
+      }             
+      break;
+    case KeyEvent.VK_EQUALS:
+      zoomAndPanController.zoom(-1);
+      break;
+    case KeyEvent.VK_MINUS:
+      zoomAndPanController.zoom(1);
+      break;
+    case KeyEvent.VK_NUMBER_SIGN:
+      zoomAndPanController.reset();
       break;
     case KeyEvent.VK_Y:
       if (isKeyPressed(KeyEvent.VK_CONTROL)) {
-        try { undoManager.redo(); } catch(Exception e) {};
+        redo();
       }
       break;
     case KeyEvent.VK_O:
@@ -111,32 +124,29 @@ public class KeyboardUI extends EventHandler {
       if (isKeyPressed(KeyEvent.VK_CONTROL)) {
         imageManager.saveAsImage();
       } else {
-        stopAllDrawHandlers();
-        activeCursor = CROSS;
-        activeDrawer = rubberBandSelection;
-        activeDrawer.start();
-        selectionController.start();
+        //selection_mode();
+        toolbar.activate_mode("Select");
       }
       break;
     case KeyEvent.VK_B:
-      stopAllDrawHandlers();
-      activeCursor = ARROW;
-      activeDrawer = rubberBandSelection;
-      activeDrawer.start();
-      selectionController.mode("blur").start();
+      //blur_mode();
+      toolbar.activate_mode("Blur");
       break;
     case KeyEvent.VK_C:
-      if (isKeyPressed(KeyEvent.VK_CONTROL) && selectionController.hasSelection()) {
+      if (//isKeyPressed(KeyEvent.VK_CONTROL) &&
+          selectionController.hasSelection()) {
         selectionController.copySelection().mode("interactivePaste");
       }
       break;
     case KeyEvent.VK_V:
-      if (isKeyPressed(KeyEvent.VK_CONTROL) && selectionController.hasSelection()) {
+      if (//isKeyPressed(KeyEvent.VK_CONTROL) &&
+          selectionController.hasSelection()) {
         selectionController.mode("interactivePaste");
       }
       break;
     case KeyEvent.VK_X:
-      if (isKeyPressed(KeyEvent.VK_CONTROL) && selectionController.hasSelection()) {
+      if (//isKeyPressed(KeyEvent.VK_CONTROL) &&
+          selectionController.hasSelection()) {
         selectionController.cutSelection().mode("interactivePaste");
       }
       break;
@@ -154,7 +164,7 @@ public class KeyboardUI extends EventHandler {
       break;
     default:
       if (key >= '0' && key <= '9')
-        colourManager.colourSelection(key, isKeyPressed(KeyEvent.VK_CONTROL));
+        colourManager.colourSelection(key-(int)'0', isKeyPressed(KeyEvent.VK_CONTROL));
     }    
   }
 

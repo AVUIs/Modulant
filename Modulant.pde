@@ -1,6 +1,8 @@
 import org.puredata.processing.PureData;
 import org.multiply.processing.TimedEventGenerator;
 import javax.swing.undo.UndoManager;
+import controlP5.*;
+
 
 /* Modulant - A sonification and audiovisual performance interface experiment.
    Copyright 2015 Berkan Eskikaya, Louis Pilfold
@@ -18,7 +20,7 @@ import javax.swing.undo.UndoManager;
 
 Config config;
 
-int WIDTH = 800;
+int WIDTH = 900;
 int HEIGHT = 600;
 
 
@@ -49,6 +51,9 @@ void onTimerEvent() { scanningController.onTimerEvent(); }
 
 GridController grid;
 
+Toolbar toolbar;
+void controlEvent(ControlEvent theEvent) { toolbar.onControlEvent(theEvent); } // for controlP5
+
 OnscreenHelp onscreenHelp;
 
 UndoManager undoManager;
@@ -58,6 +63,8 @@ ImageManager imageManager;
 SelectionController selectionController;
 
 int activeCursor = ARROW;
+
+ZoomAndPanController zoomAndPanController;
 
 
 void setup() {
@@ -96,7 +103,10 @@ void setup() {
   size(WIDTH, HEIGHT);
   frameRate(30);
   smooth();
-
+  
+  if (frame != null) {
+    frame.setResizable(true);
+  }
 
   /* Buffers (Layers) */
 
@@ -186,14 +196,14 @@ void setup() {
     .propagateTo(workBuffer);
     
   
-  freehandBrushStandard
+  freehandBrushPaintEffect
     = new DragAction(this.g, 
                      new IDragStep() { 
                        public void action(PGraphics g, int start_x, int start_y, int current_x, int current_y) {
                          g.beginDraw();
                          //g.ellipse(current_x, current_y, 10, 10);
                          g.stroke(colourManager.activeColour());
-                         for ( int i=0;i<30;i++) {
+                         for ( int i=0;i<10;i++) {
                            g.line(mouseX+random(5), mouseY+random(5), pmouseX+random(5), pmouseY+random(5));
                            //g.line(start_x+random(10), start_y+random(10), current_x+random(10), current_y+random(10));
                            g.strokeWeight(1);
@@ -204,7 +214,7 @@ void setup() {
     .propagateTo(workBuffer, true);
 
 
-  freehandBrushPaintEffect
+  freehandBrushStandard
     = new DragAction(this.g,
                      new IDragStep() {
                        public void action(PGraphics g, int start_x, int start_y, int current_x, int current_y) {
@@ -245,8 +255,21 @@ void setup() {
 
   activeDrawer = freehandBrushPaintEffect;
   activeDrawer.start();
+
+  // need to set this up after activeDrawer is set (because it calls a function to activate it)
+  toolbar = new Toolbar(this, gridBuffer);
+  toolbar.setup();
+  
+
+  zoomAndPanController = new ZoomAndPanController(WIDTH/2,HEIGHT/2,WIDTH,HEIGHT);
+  // TODO: it works, but disabling for the moment, because the drawing
+  // tools don't know how to translate from the zoomed/panned coordinates
+  // to the underlying buffer coordinates
+  zoomAndPanController.disable(); 
   
 }
+
+ControlP5 cp5;
 
 void draw() {
 
@@ -254,17 +277,37 @@ void draw() {
 
   //grid.mark(5,5);
 
-  if (mouseY < ScanningController.ACTIVE_TOPBAR_HEIGHT) {
+  imageMode(CENTER);
+  
+  if (mouseY < ScanningController.ACTIVE_TOPBAR_HEIGHT
+      || mouseY > HEIGHT - Toolbar.ACTIVE_TOOLBAR_HEIGHT) {
     cursor(HAND);
   } else {
     cursor(activeCursor);
   }
-  
-  image(workBuffer,0,0);
-  image(gridBuffer,0,0);
-  image(effectsBuffer,0,0);
-  image(selectionBuffer,0,0);
+
+  int centerX = zoomAndPanController.centerX();
+  int centerY = zoomAndPanController.centerY();
+  int sketchW = zoomAndPanController.sketchW();
+  int sketchH = zoomAndPanController.sketchH();
+
+  image(workBuffer, centerX, centerY, sketchW, sketchH);
+  image(gridBuffer, centerX, centerY, sketchW, sketchH);
+  image(effectsBuffer, centerX, centerY, sketchW, sketchH);
+  image(selectionBuffer, centerX, centerY, sketchW, sketchH);
   if (activeDrawer != null)
     activeDrawer.draw();
-  image(onscreenHelp.getBuffer(),0,0);
+  image(onscreenHelp.getBuffer(), centerX, centerY, sketchW, sketchH);
+
+
+  if (toolbar.isVisible)
+    cp5.draw();
+  
+  // image(workBuffer,0,0);
+  // image(gridBuffer,0,0);
+  // image(effectsBuffer,0,0);
+  // image(selectionBuffer,0,0);
+  // if (activeDrawer != null)
+  //   activeDrawer.draw();
+  // image(onscreenHelp.getBuffer(),0,0);
 }

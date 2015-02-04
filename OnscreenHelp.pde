@@ -38,6 +38,7 @@ public class OnscreenHelp {
     "Ctrl-o \t\t load background image\n" +
     "Ctrl-s \t\t save work buffer as image\n" +
     "\n" +
+    "Shift-t \t\t toggle toolbar\n" +
     "h \t\t toggle help (this text)\n" +
     "Ctrl-q \t\t exit application";
     

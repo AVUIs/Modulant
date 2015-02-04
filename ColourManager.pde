@@ -2,9 +2,9 @@ public class ColourManager  {
 
   color activeColour = #ffffff;
 
-  private color[] solarizedBase 
+  public color[] solarizedBase 
     = new color[] { #000000, #002b36, #073642, #586e75, #657b83, #839496, #93a1a1, #eee8d5, #fdf6e3, #ffffff };
-  private color[] solarizedAccent 
+  public color[] solarizedAccent 
     = new color[] { #b58900, #cb4b16, #dc322f, #d33682, #6c71c4, #268bd2, #2aa198, #859900 };
 
   
@@ -16,10 +16,10 @@ public class ColourManager  {
     
     try {
       if (fromAccentRange)
-        c = solarizedAccent[index - (int)'0'];
+        c = solarizedAccent[index];
       else
-        c = solarizedBase[index - (int)'0'];
-    
+        c = solarizedBase[index];
+      
       activeColour(c);
     } catch (Exception e) {
       println(e);

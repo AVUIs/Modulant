@@ -122,12 +122,14 @@ public class SelectionController extends EventHandler {
   SelectionController replaceSelection(PImage replacement) {
     if (this.hasSelection()) {
       UndoableEdit undoableEdit = new UndoableEdit(workBuffer);
-      println("replaceSelection");
+      
+      //println("replaceSelection");
       workBuffer.beginDraw();
       //println("sel", selection.x, selection.y, selection.w, selection.h);
       workBuffer.copy(replacement, 0, 0, selection.w, selection.h,
                       selection.x, selection.y, selection.w, selection.h);
       workBuffer.endDraw();
+      
       undoableEdit.end();
     }
     return this;
@@ -144,13 +146,15 @@ public class SelectionController extends EventHandler {
 
   SelectionController deleteSelection() {
     UndoableEdit undoableEdit = new UndoableEdit(workBuffer);
-    println("deleteSelection");
+    
     workBuffer.beginDraw();
     workBuffer.fill(0);
     workBuffer.noStroke();
     workBuffer.rect(selection.x, selection.y, selection.w, selection.h);      
     workBuffer.endDraw();
     workBuffer.noFill();
+    
+    undoableEdit.end();
     return this;
   }
   
@@ -162,21 +166,23 @@ public class SelectionController extends EventHandler {
     
   SelectionController pasteSelection(int x, int y) {
     UndoableEdit undoableEdit = new UndoableEdit(workBuffer);
-    println("pasteSelection");
+    
     workBuffer.beginDraw();
     workBuffer.copy(selection.img, 0, 0, selection.w, selection.h, x, y, selection.w, selection.h);
     workBuffer.endDraw();
+    
     undoableEdit.end();
     return this;    
   }
-  
+
+
+  // FIXME: this causes a random crash of the VM (sometimes) when a
+  // "small" region to be blur'ed is selected from the bottom to the top, 
   SelectionController blur() {
     selection = new Selection(workBuffer, x1, y1, x2, y2);
     selection.img.filter(BLUR,3);
-    replaceSelection(selection.img);
-      
+    replaceSelection(selection.img);      
     return this;
-
   }
 
   SelectionController mode(String mode) {

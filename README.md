@@ -70,6 +70,8 @@ Install (unpack) into your `sketchbook/libraries` folder:
 - [libpd/puredatap5](https://github.com/libpd/puredatap5)  ([pdp5.zip](https://github.com/libpd/puredatap5/blob/master/pdp5.zip))
 - [TimedEvent](http://multiply.org/processing/)  ([TimedEvents.zip](http://multiply.org/processing/TimedEvents.zip))
 
+- [ControlP5](http://www.sojamo.de/libraries/controlP5/)  [controlP5-2.0.4.zip](http://www.sojamo.de/libraries/controlP5/download/controlP5-2.0.4.zip)
+
 See this [short guide on installing libraries](http://www.learningprocessing.com/tutorials/libraries/) for the where and how if you are not sure.
 
 The dependency on Processing 3.0 may go away at some point. Modulant gets a strange NullPointerException at startup on Processing 2.2.1. 
