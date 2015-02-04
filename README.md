@@ -10,9 +10,11 @@ The audio engine is inspired by a 1940’s synthesizer, the ANS, that scans acro
 
 ## Usage
 
-The early Modulant has a very plain and minimalist interface, geared toward fast switching between its modes.
+The early Modulant has a plain and minimalist interface, geared toward fast switching between its modes.
 
-The application responds to keyboard shortcuts which select various drawing modes or execute commands. The pointer/mouse is only used for drawing.
+The easiest user interface for the new user is the toolbar, which facilitates selecting drawing modes and colours, playing and pasusing the composition, and loading and saving the work.
+
+The application also responds to keyboard shortcuts covering a richer set of functionality.
 
 Here is the current list of keybindings:
 
@@ -81,7 +83,9 @@ The dependency on Processing 3.0 may go away at some point. Modulant gets a stra
 
 - Images that you load to sonify should have light features on dark backgrounds. The brightness of each pixel determines the volume of the associated oscillator -- if the majority of your image is bright, then all you're going to hear is a loud and harsh noise.
 
-- Also, when drawing, it's better to avoid bright and long vertical lines/regions -- these will turn on a lot of oscillators in one go, which may sound unpleasant (unless you know what you're doing).
+- Also, when drawing, it's better to avoid bright and long/thick vertical lines/regions -- these will turn on a lot of oscillators in one go, which may sound unpleasant (unless you know what you're doing).
+
+- Blur is a nice tool to make sounds more gentle.
 
 ## Example images for sonification
 
