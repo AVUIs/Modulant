@@ -1,3 +1,19 @@
+public class Marker {
+  int x, y;
+  String text;
+  boolean isSet = false;
+  
+  public Marker(int x, int y, String text) {
+    this.x = x;
+    this.y = y;
+    this.text = text;
+    isSet = true;
+  }
+
+  public Marker() {}
+
+}
+
 public class GridController {
   
   int nCellsX;
@@ -9,6 +25,8 @@ public class GridController {
   PGraphics gridBuffer;
 
   boolean isEnabled = true;
+
+  Marker[] markers = new Marker[4];
   
   public GridController (PGraphics gridBuffer, int nCellsX, int nCellsY, color gridColour) {
     this.gridBuffer = gridBuffer;
@@ -21,6 +39,9 @@ public class GridController {
 
     xspacing = Math.max(10, (float)gWidth/nCellsX);
     yspacing = Math.max(10, (float)gHeight/nCellsY);   
+
+    for (int i=0; i<markers.length; i++)
+      markers[i] = new Marker();
     
     draw();
   }
@@ -59,14 +80,40 @@ public class GridController {
       gridBuffer.line (0, i, gWidth, i);
       gridBuffer.text(nCellsY+1-j, 0, i); //BE stupid hack +1!
     }
-
+    
     gridBuffer.endDraw();
 
+    for (Marker marker : markers) {
+      if (marker.isSet)
+        mark(marker, gridBuffer);
+    }
+
+    
+    return this;
+  }
+
+  
+  public GridController mark(int index, int x, int y) {
+    if (index >= markers.length)
+      return this;
+    markers[index] = new Marker(x,y,""+index);
+    //mark(markers[index], gridBuffer);
+    draw();
     return this;
   }
 
 
-  public GridController mark(int x, int y, PGraphics buffer) {
+  public GridController mark(Marker marker, PGraphics buffer) {
+    buffer.beginDraw();
+    buffer.noFill();
+    buffer.stroke(255);
+    buffer.ellipse(marker.x, marker.y, 15, 15);
+    buffer.text(marker.text,marker.x-4,marker.y+5);
+    buffer.endDraw();
+    return this;
+  }
+  
+  public GridController markCell(int x, int y, PGraphics buffer) {
 
     int bHeight = buffer.height;
     int ymax = (int)((float)bHeight/yspacing);
@@ -77,14 +124,11 @@ public class GridController {
     buffer.noFill();
     buffer.stroke(255);
     buffer.ellipse(xx*xspacing, yy*yspacing, 10, 10);
+    println(xx*xspacing, yy*yspacing, 10, 10);
     //buffer.line(xx*xspacing, yy*yspacing, xx*xspacing+5, yy*yspacing);
     buffer.endDraw();
     return this;
   }
 
-
-  public GridController mark(int x, int y) {
-    return mark(x,y,gridBuffer);
-  }
   
 }

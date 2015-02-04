@@ -34,6 +34,10 @@ public class OnscreenHelp {
     "m \t\t mute/unmute sound\n" +
     "g \t\t toggle grid\n" +
     "\n" +
+    "Bookmarks\n" +
+    "Escape-F1,F2,F3,F4 \t\t store current scanline position\n" +
+    "F1,F2,F3,F4 \t\t jump to stored position\n" +
+    "\n" +
     "File Operations\n\n" +
     "Ctrl-o \t\t load background image\n" +
     "Ctrl-s \t\t save work buffer as image\n" +

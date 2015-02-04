@@ -162,6 +162,31 @@ public class KeyboardUI extends EventHandler {
     case KeyEvent.VK_A:
       //pd.send(113, 10.0);
       break;
+    case KeyEvent.VK_F1:
+      if (isKeyPressed(KeyEvent.VK_ESCAPE))
+        scanningController.addBookmark(1);
+      else
+        scanningController.gotoBookmark(1);
+      break;
+    case KeyEvent.VK_F2:
+      if (isKeyPressed(KeyEvent.VK_ESCAPE))
+        scanningController.addBookmark(2);
+      else
+        scanningController.gotoBookmark(2);
+      break;
+    case KeyEvent.VK_F3:
+      if (isKeyPressed(KeyEvent.VK_ESCAPE))
+        scanningController.addBookmark(3);
+      else
+        scanningController.gotoBookmark(3);
+      break;
+    case KeyEvent.VK_F4:
+      if (isKeyPressed(KeyEvent.VK_ESCAPE))
+        scanningController.addBookmark(4);
+      else
+        scanningController.gotoBookmark(4);
+      break;
+      
     default:
       if (key >= '0' && key <= '9')
         colourManager.colourSelection(key-(int)'0', isKeyPressed(KeyEvent.VK_CONTROL));

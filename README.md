@@ -45,6 +45,10 @@ Here is the current list of keybindings:
     m                      mute/unmute sound 
     g                      toggle grid
 
+### Bookmarks
+	Escape-F1,F2,F3,F4     store current scanline position
+	F1,F2,F3,F4            jump to stored position
+
 ### File Operations 
     Ctrl-o  load background image 
     Ctrl-s  save work buffer as image 

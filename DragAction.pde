@@ -65,7 +65,9 @@ public class DragAction extends EventHandler implements IDrawer {
 
   void draw() {
     if (toolbar.pointIsInside(start_x, start_y)
-        || toolbar.pointIsInside(current_x, current_y))
+        || toolbar.pointIsInside(current_x, current_y)
+        || scanningController.pointIsInsideTopbar(start_x, start_y)
+        || scanningController.pointIsInsideTopbar(current_x, current_y))
       return;
     
     int sizex = current_x - start_x;
@@ -89,7 +91,8 @@ public class DragAction extends EventHandler implements IDrawer {
     
     mouseDragged(); // Reset vars
 
-    if (toolbar.pointIsInside(start_x, start_y))
+    if (toolbar.pointIsInside(start_x, start_y)
+        || scanningController.pointIsInsideTopbar(start_x, start_y))
       return;
     
     ArrayList<PropagateTarget> savedTargets = new ArrayList<PropagateTarget>(propagateTargets);
@@ -102,7 +105,8 @@ public class DragAction extends EventHandler implements IDrawer {
     current_x = mouseX;
     current_y = mouseY;
     
-    if (toolbar.pointIsInside(current_x, current_y))
+    if (toolbar.pointIsInside(current_x, current_y)
+        || scanningController.pointIsInsideTopbar(current_x, current_y))
       return;
 
     stroke(255,255,255);
@@ -113,7 +117,9 @@ public class DragAction extends EventHandler implements IDrawer {
     //undoableEdit.updateBoundingBox(start_x, start_y, current_x, current_y);
 
     if (toolbar.pointIsInside(start_x, start_y)
-        || toolbar.pointIsInside(current_x, current_y))
+        || toolbar.pointIsInside(current_x, current_y)
+        || scanningController.pointIsInsideTopbar(start_x, start_y)
+        || scanningController.pointIsInsideTopbar(current_x, current_y))
       return;
     
     fill(finalcolor());
@@ -157,7 +163,7 @@ public class DragAction extends EventHandler implements IDrawer {
       return color(colourManager.activeColour(), 127);
 
   }
-
+  
 }
 
 

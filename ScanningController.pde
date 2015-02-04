@@ -21,6 +21,8 @@ public class ScanningController extends EventHandler {
 
   float[] lastVol;
   float[] currVol;
+
+  int[] bookmarks = new int[4];
   
   public ScanningController (PApplet parent, Config appConfig, PGraphics workBuffer, PGraphics effectsBuffer) {
     this.parent = parent;
@@ -102,6 +104,10 @@ public class ScanningController extends EventHandler {
   }
 
 
+  boolean pointIsInsideTopbar(int x, int y) {
+    return y < ScanningController.ACTIVE_TOPBAR_HEIGHT;
+  }
+  
 
   void onTimerEvent() {
     int millisDiff = millis() - lastMillis;
@@ -283,8 +289,22 @@ public class ScanningController extends EventHandler {
       setCurrentScanLine(mouseX);
   }
 
-
   void mouseReleased() {
     mouseMovingTheScanline = false;
   }
+
+
+  void addBookmark(int number) {
+    int currentScanLine = getCurrentScanline();
+    bookmarks[number] = currentScanLine;
+    grid.mark(number, currentScanLine, 20);
+  }
+
+  void gotoBookmark(int number) {
+    try { // too lazy to check
+      setCurrentScanLine(bookmarks[number]);
+    } catch (Exception e) {
+    }
+  }
+  
 }
