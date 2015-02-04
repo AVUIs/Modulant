@@ -76,7 +76,7 @@ void setup() {
     .bpm(125)
     .octaves(10)
     .intervalsInOctave(OctaveDivisions.TET12)
-    .backgroundImage("data/klee-lines-dots-drawing-bw.jpg")
+    //.backgroundImage("data/klee-lines-dots-drawing-bw.jpg")
     .update();
 
   // config = new Config()
@@ -120,7 +120,8 @@ void setup() {
   /* Controllers and Managers */
 
   imageManager = new ImageManager(this, workBuffer);
-  imageManager.background(config.backgroundImage());
+  if (!"".equals(config.backgroundImage()))
+    imageManager.background(config.backgroundImage());
 
 
   grid = new GridController(gridBuffer, config.lengthInBeats(), config.octaves(), color(50,50,50,127));
