@@ -23,6 +23,7 @@ Here is the current list of keybindings:
     f       freehand mode 
 	p       freehand paintbrush
 	d       freehand w/ dots
+	b       blur selected region	
     Ctrl-z  undo 
     Ctrl-y  redo
 	Shift-l clear all 
@@ -32,7 +33,6 @@ Here is the current list of keybindings:
 	Ctrl-c  copy & interactively paste selection
 	Ctrl-x  cut & interactively paste selection
 	Escape  exit selection mode
-	b       blur selected region
 
 
 ### Sonification Control
@@ -54,7 +54,8 @@ Here is the current list of keybindings:
     9         white
 
 ### Help
-    h         toggle help (this text)
+	h         toggle help (this text)
+	Shift-t   toggle toolbar
     Ctrl-q    exit application
 
 
@@ -70,7 +71,7 @@ Install (unpack) into your `sketchbook/libraries` folder:
 - [libpd/puredatap5](https://github.com/libpd/puredatap5)  ([pdp5.zip](https://github.com/libpd/puredatap5/blob/master/pdp5.zip))
 - [TimedEvent](http://multiply.org/processing/)  ([TimedEvents.zip](http://multiply.org/processing/TimedEvents.zip))
 
-- [ControlP5](http://www.sojamo.de/libraries/controlP5/)  [controlP5-2.0.4.zip](http://www.sojamo.de/libraries/controlP5/download/controlP5-2.0.4.zip)
+- [ControlP5](http://www.sojamo.de/libraries/controlP5/)  ([controlP5-2.0.4.zip])(http://www.sojamo.de/libraries/controlP5/download/controlP5-2.0.4.zip)
 
 See this [short guide on installing libraries](http://www.learningprocessing.com/tutorials/libraries/) for the where and how if you are not sure.
 
