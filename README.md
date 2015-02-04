@@ -12,7 +12,7 @@ The audio engine is inspired by a 1940’s synthesizer, the ANS, that scans acro
 
 The early Modulant has a plain and minimalist interface, geared toward fast switching between its modes.
 
-The easiest user interface for the new user is the toolbar, which facilitates selecting drawing modes and colours, playing and pasusing the composition, and loading and saving the work.
+The easiest start for the new user is the toolbar, which facilitates selecting drawing modes and colours, playing and pausing the composition, and loading and saving the work.
 
 The application also responds to keyboard shortcuts covering a richer set of functionality.
 
@@ -68,12 +68,12 @@ Download and install Processing 3.0 (3.0a5 at the time of this writing):
 
 - https://processing.org/download/?processing
 
-Install (unpack) into your `sketchbook/libraries` folder:
+Download and install (unpack) these libraries into your `sketchbook/libraries` folder:
 
 - [libpd/puredatap5](https://github.com/libpd/puredatap5)  ([pdp5.zip](https://github.com/libpd/puredatap5/blob/master/pdp5.zip))
 - [TimedEvent](http://multiply.org/processing/)  ([TimedEvents.zip](http://multiply.org/processing/TimedEvents.zip))
 
-- [ControlP5](http://www.sojamo.de/libraries/controlP5/)  ([controlP5-2.0.4.zip])(http://www.sojamo.de/libraries/controlP5/download/controlP5-2.0.4.zip)
+- [ControlP5](http://www.sojamo.de/libraries/controlP5/)  ([controlP5-2.0.4.zip](http://www.sojamo.de/libraries/controlP5/download/controlP5-2.0.4.zip))
 
 See this [short guide on installing libraries](http://www.learningprocessing.com/tutorials/libraries/) for the where and how if you are not sure.
 
