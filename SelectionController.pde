@@ -1,5 +1,3 @@
-import gab.opencv.*;
-
 public class Selection {
   public int x, y, w, h;
   public PImage img;
@@ -96,6 +94,16 @@ public class SelectionController extends EventHandler {
     }
   }
 
+  // TODO: in order to use any selection as a brush
+  // 1. it's slow (maybe because every pasteSelection stores an UndoableEdit);
+  // 2. it loses the activeDrawer (Escape should replace it back)
+  // void mouseDragged() {
+  //   if (mode.equals("interactivePaste")) {
+  //     activeDrawer.stop();
+  //     pasteSelection(mouseX, mouseY);
+  //   }
+  // }
+  
   void mouseReleased() {
     x2 = mouseX;
     y2 = mouseY;
