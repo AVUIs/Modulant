@@ -184,11 +184,13 @@ public class SelectionController extends EventHandler {
   }
 
 
-  // FIXME: this causes a random crash of the VM (sometimes) when a
-  // "small" region to be blur'ed is selected from the bottom to the top, 
+  // img.filter(BLUR) causes a random crash of the VM (sometimes) when a
+  // "small" region to be blur'ed is selected from the bottom to the top,
+  // the width&height check here is to stop that from happening
   SelectionController blur() {
     selection = new Selection(workBuffer, x1, y1, x2, y2);
-    selection.img.filter(BLUR,3);
+    if (selection.w > 12 && selection.h > 12)
+      selection.img.filter(BLUR,3);
     replaceSelection(selection.img);      
     return this;
   }
